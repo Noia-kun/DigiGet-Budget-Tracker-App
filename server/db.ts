@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, ledgerSnapshots, users } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -84,9 +84,33 @@ export async function getUserByOpenId(openId: string) {
     return undefined;
   }
 
-  const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
+  const result = await db
+    .select()
+    .from(users)
+    .where(eq(users.openId, openId))
+    .limit(1);
 
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getLedgerSnapshot(deviceId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is temporarily unavailable");
+  const rows = await db
+    .select()
+    .from(ledgerSnapshots)
+    .where(eq(ledgerSnapshots.deviceId, deviceId))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
+export async function saveLedgerSnapshot(deviceId: string, snapshot: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is temporarily unavailable");
+  await db
+    .insert(ledgerSnapshots)
+    .values({ deviceId, snapshot })
+    .onDuplicateKeyUpdate({
+      set: { snapshot, updatedAt: new Date() },
+    });
+}

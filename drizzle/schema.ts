@@ -1,4 +1,11 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar } from "drizzle-orm/mysql-core";
+import {
+  int,
+  mysqlEnum,
+  mysqlTable,
+  text,
+  timestamp,
+  varchar,
+} from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -25,4 +32,13 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Anonymous installation-scoped ledger snapshot. The client keeps the same
+ * records in AsyncStorage so entries remain available while offline.
+ */
+export const ledgerSnapshots = mysqlTable("ledger_snapshots", {
+  deviceId: varchar("deviceId", { length: 96 }).primaryKey(),
+  snapshot: text("snapshot").notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+export type LedgerSnapshotRow = typeof ledgerSnapshots.$inferSelect;
