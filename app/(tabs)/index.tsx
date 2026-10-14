@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -90,7 +90,7 @@ export default function HomeScreen() {
             accessibilityLabel="Open settings"
             style={styles.avatar}
           >
-            <Ionicons name="person-outline" color={C.green} size={19} />
+            <Icon name="person-outline" color={C.green} size={19} />
           </Pressable>
         </View>
         <SyncBanner
@@ -125,7 +125,7 @@ export default function HomeScreen() {
               >
                 <Text style={styles.balanceLabel}>NET THIS MONTH</Text>
                 <View style={styles.cardBadge}>
-                  <Ionicons name="leaf-outline" size={13} color="#D7E7C9" />
+                  <Icon name="leaf-outline" size={13} color="#D7E7C9" />
                   <Text
                     style={{
                       color: "#D7E7C9",
@@ -205,7 +205,7 @@ export default function HomeScreen() {
                   accessibilityRole="button"
                   style={styles.addTiny}
                 >
-                  <Ionicons name="add" size={17} color={C.green} />
+                  <Icon name="add" size={17} color={C.green} />
                   <Text
                     style={{ color: C.green, fontWeight: "700", fontSize: 12 }}
                   >
@@ -305,7 +305,7 @@ export default function HomeScreen() {
               accessibilityLabel="Add income or expense"
               style={styles.fab}
             >
-              <Ionicons name="add" size={22} color="#fff" />
+              <Icon name="add" size={22} color="#fff" />
               <Text style={{ color: "#fff", fontWeight: "700" }}>
                 Add entry
               </Text>
@@ -372,10 +372,10 @@ function Onboarding({ onFinish }: { onFinish: (currency: string) => void }) {
       </View>
       <View style={styles.onboardArt}>
         <View style={styles.artCircle}>
-          <Ionicons name={current.icon} size={42} color={C.green} />
+          <Icon name={current.icon} size={42} color={C.green} />
         </View>
         <View style={styles.leafDot}>
-          <Ionicons name="leaf" size={17} color="#fff" />
+          <Icon name="leaf" size={17} color="#fff" />
         </View>
       </View>
       <Text
@@ -442,7 +442,7 @@ function Onboarding({ onFinish }: { onFinish: (currency: string) => void }) {
           <Text style={{ color: "#fff", fontWeight: "700", fontSize: 15 }}>
             {step === 2 ? "Start tracking" : "Continue"}
           </Text>
-          <Ionicons name="arrow-forward" size={17} color="#fff" />
+          <Icon name="arrow-forward" size={17} color="#fff" />
         </Pressable>
       </View>
     </View>

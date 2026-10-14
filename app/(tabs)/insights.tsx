@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -91,7 +91,7 @@ export default function InsightsScreen() {
           </Text>
           <View style={styles.pair}>
             <View style={styles.pairItem}>
-              <Ionicons
+              <Icon
                 name="arrow-down-circle-outline"
                 size={17}
                 color="#B9D58B"
@@ -102,11 +102,7 @@ export default function InsightsScreen() {
               </Text>
             </View>
             <View style={styles.pairItem}>
-              <Ionicons
-                name="arrow-up-circle-outline"
-                size={17}
-                color="#F1AE90"
-              />
+              <Icon name="arrow-up-circle-outline" size={17} color="#F1AE90" />
               <Text style={styles.pairLabel}>Expenses</Text>
               <Text style={styles.pairValue}>
                 {formatMoney(totals.expense, ledger.data.preferences.currency)}
@@ -189,7 +185,7 @@ export default function InsightsScreen() {
                 {formatMoney(prior.expense, ledger.data.preferences.currency)}
               </Text>
             </View>
-            <Ionicons name="arrow-forward" size={19} color={C.muted} />
+            <Icon name="arrow-forward" size={19} color={C.muted} />
             <View style={{ flex: 1, alignItems: "flex-end" }}>
               <Text style={page.label}>{monthLabel(month)}</Text>
               <Text style={[styles.compareValue, { color: C.ink }]}>

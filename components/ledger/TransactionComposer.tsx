@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { useState } from "react";
 import {
   Modal,
@@ -114,7 +114,7 @@ export function TransactionComposer({
             accessibilityLabel="Close entry form"
             style={styles.close}
           >
-            <Ionicons name="close" size={21} color={C.ink} />
+            <Icon name="close" size={21} color={C.ink} />
           </Pressable>
         </View>
         <View style={styles.segment}>
@@ -203,7 +203,7 @@ export function TransactionComposer({
                     },
                   ]}
                 >
-                  <Ionicons
+                  <Icon
                     name={category.icon as any}
                     size={15}
                     color={activeCategoryId === category.id ? C.green : C.muted}
@@ -259,7 +259,7 @@ export function TransactionComposer({
               { backgroundColor: kind === "income" ? C.green : C.ink },
             ]}
           >
-            <Ionicons
+            <Icon
               name={saved ? "checkmark-circle" : "checkmark"}
               size={18}
               color="#fff"

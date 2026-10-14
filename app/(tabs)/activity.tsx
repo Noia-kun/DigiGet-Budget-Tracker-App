@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -80,7 +80,7 @@ export default function ActivityScreen() {
           onRetry={() => void ledger.syncNow()}
         />
         <View style={styles.searchRow}>
-          <Ionicons name="search-outline" size={18} color={C.muted} />
+          <Icon name="search-outline" size={18} color={C.muted} />
           <TextField
             value={query}
             onChangeText={setQuery}
@@ -97,7 +97,7 @@ export default function ActivityScreen() {
               filtersOpen && { backgroundColor: C.green },
             ]}
           >
-            <Ionicons
+            <Icon
               name="options-outline"
               size={18}
               color={filtersOpen ? "#fff" : C.green}
@@ -211,7 +211,7 @@ export default function ActivityScreen() {
               accessibilityRole="button"
               style={styles.add}
             >
-              <Ionicons name="add" size={18} color="#fff" />
+              <Icon name="add" size={18} color="#fff" />
               <Text style={{ color: "#fff", fontWeight: "700" }}>Add</Text>
             </Pressable>
           </View>

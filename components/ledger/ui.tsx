@@ -1,4 +1,4 @@
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { useMemo } from "react";
 import {
   ActivityIndicator,
@@ -86,7 +86,7 @@ export function BrandMark({ size = 34 }: { size?: number }) {
         justifyContent: "center",
       }}
     >
-      <Ionicons name="book-outline" size={size * 0.58} color="#FFF" />
+      <Icon name="book-outline" size={size * 0.58} color="#FFF" />
       <View
         style={{
           position: "absolute",
@@ -129,7 +129,7 @@ export function SyncBanner({
         gap: 8,
       }}
     >
-      <Ionicons
+      <Icon
         name={offline ? "cloud-offline-outline" : "cloud-upload-outline"}
         size={16}
         color={offline ? C.coral : C.green}
@@ -185,7 +185,7 @@ export function MonthPicker({
         hitSlop={8}
         style={styles.monthButton}
       >
-        <Ionicons name="chevron-back" size={18} color={C.ink} />
+        <Icon name="chevron-back" size={18} color={C.ink} />
       </Pressable>
       <Text style={{ color: C.ink, fontWeight: "700", fontSize: 14 }}>
         {monthLabel(date)}
@@ -197,7 +197,7 @@ export function MonthPicker({
         hitSlop={8}
         style={styles.monthButton}
       >
-        <Ionicons name="chevron-forward" size={18} color={C.ink} />
+        <Icon name="chevron-forward" size={18} color={C.ink} />
       </Pressable>
     </View>
   );
@@ -240,7 +240,7 @@ export function TransactionRow({
             { backgroundColor: category?.color ?? "#A0AAA3" },
           ]}
         >
-          <Ionicons
+          <Icon
             name={(category?.icon ?? "ellipse-outline") as any}
             size={18}
             color="#fff"
@@ -276,7 +276,7 @@ export function TransactionRow({
           hitSlop={8}
           style={{ padding: 8, marginLeft: 5 }}
         >
-          <Ionicons name="trash-outline" size={17} color="#A9B0A8" />
+          <Icon name="trash-outline" size={17} color="#A9B0A8" />
         </Pressable>
       )}
     </View>
@@ -305,7 +305,7 @@ export function EmptyState({
           justifyContent: "center",
         }}
       >
-        <Ionicons name="leaf-outline" size={25} color={C.green} />
+        <Icon name="leaf-outline" size={25} color={C.green} />
       </View>
       <Text style={{ fontWeight: "700", color: C.ink, fontSize: 16 }}>
         {title}

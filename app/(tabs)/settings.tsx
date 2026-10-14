@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import * as Notifications from "expo-notifications";
 import { useState } from "react";
 import {
@@ -153,7 +153,7 @@ export default function SettingsScreen() {
               <Text style={{ color: C.green, fontWeight: "800" }}>
                 {ledger.data.preferences.currency}
               </Text>
-              <Ionicons name="chevron-down" size={14} color={C.green} />
+              <Icon name="chevron-down" size={14} color={C.green} />
             </View>
           </View>
           <View style={styles.currencyList}>
@@ -319,7 +319,7 @@ export default function SettingsScreen() {
               accessibilityRole="button"
               style={styles.addBtn}
             >
-              <Ionicons name="add" size={19} color="#fff" />
+              <Icon name="add" size={19} color="#fff" />
             </Pressable>
           </View>
           {categoryMessage ? (
@@ -380,7 +380,7 @@ export default function SettingsScreen() {
           accessibilityRole="button"
           style={styles.replay}
         >
-          <Ionicons name="refresh-outline" size={16} color={C.green} />
+          <Icon name="refresh-outline" size={16} color={C.green} />
           <Text style={{ color: C.green, fontWeight: "700" }}>
             Replay the introduction
           </Text>

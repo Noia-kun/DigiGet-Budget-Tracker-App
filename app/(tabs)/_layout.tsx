@@ -1,9 +1,9 @@
 import { Tabs } from "expo-router";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
+import { Icon } from "@/components/ledger/Icon";
 import { C } from "@/components/ledger/ui";
-const icons: Record<string, keyof typeof Ionicons.glyphMap> = {
+const icons: Record<string, string> = {
   index: "grid-outline",
   activity: "receipt-outline",
   insights: "pie-chart-outline",
@@ -30,7 +30,7 @@ export default function TabLayout() {
               backgroundColor: focused ? "#E6F1E9" : "transparent",
             }}
           >
-            <Ionicons
+            <Icon
               name={icons[route.name] ?? "ellipse-outline"}
               size={19}
               color={color}
