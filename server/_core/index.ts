@@ -22,6 +22,16 @@ async function startServer() {
   registerStorageProxy(app);
   registerOAuthRoutes(app);
 
+  app.get("/", (_req, res) => {
+    res.json({
+      ok: true,
+      service: "Pocket Ledger API",
+      message: "Backend service is running. Use the mobile app to access your ledger.",
+      health: "/api/health",
+      api: "/api/trpc",
+    });
+  });
+
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true, timestamp: Date.now() });
   });
