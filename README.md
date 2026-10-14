@@ -21,6 +21,10 @@ This repository intentionally contains no `.env` file or secrets. In a standalon
 
 The API root (`/`) returns service information; `/api/health` is the health check; typed application procedures are under `/api/trpc`.
 
+## Production API container
+
+The root `Dockerfile` builds the TypeScript API with the pinned pnpm version, installs runtime dependencies in a clean Node 22 image, and starts `dist/index.js`. It listens on the platform-provided `PORT` (default 3000). Configure the deployment health check as `/api/health`. Supply `DATABASE_URL`, OAuth/signing values and any other private runtime configuration through the deployment's secret/environment settings; never bake those values into the image.
+
 ## Project layout
 
 - `app/` — Expo Router screens (Home, Activity, Insights, Settings, and OAuth callback).
