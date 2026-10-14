@@ -77,7 +77,7 @@ export default function HomeScreen() {
                   letterSpacing: -0.3,
                 }}
               >
-                pocket ledger
+                DigiGet
               </Text>
               <Text style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>
                 A little more clarity, daily.

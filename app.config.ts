@@ -28,7 +28,7 @@ const schemeFromBundleId = `manus${timestamp}`;
 
 const env = {
   // App branding - update these values directly (do not use env vars)
-  appName: "Pocket Ledger",
+  appName: "DigiGet",
   appSlug: "pocketledger",
   // Durable HTTPS brand-logo asset used for project metadata.
   // The native icon files below are bundled separately with the application.

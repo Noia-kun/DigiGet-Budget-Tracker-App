@@ -1,6 +1,6 @@
-# Pocket Ledger Design Tokens
+# DigiGet Design Tokens
 
-Pocket Ledger uses a calm editorial-finance visual language: warm paper, crisp white cards, near-black ink, and an ownable deep leaf green. These values are extracted from the shipped app, principally `components/ledger/ui.tsx`, the screen styles, `shared/ledger.ts`, and the Expo theme configuration. The app-level ledger palette and the starter’s generic semantic theme are documented separately because they are not currently the same token source.
+DigiGet uses a calm editorial-finance visual language: warm paper, crisp white cards, near-black ink, and an ownable deep leaf green. These values are extracted from the shipped app, principally `components/ledger/ui.tsx`, the screen styles, `shared/ledger.ts`, and the Expo theme configuration. The app-level ledger palette and the starter’s generic semantic theme are documented separately because they are not currently the same token source.
 
 ## 1. Brand and surface colors
 
@@ -11,7 +11,7 @@ Pocket Ledger uses a calm editorial-finance visual language: warm paper, crisp w
 | `ink` | `#17231C` | Primary text, strong numbers, and dark primary CTA. |
 | `muted` | `#7D867F` | Secondary text, hints, inactive controls. |
 | `line` | `#E6E9E1` | Card/input borders and quiet separators. |
-| `green` / Pocket Leaf | `#2F7A58` | Signature action, selected states, sync/positive cues, and brand mark. |
+| `green` / DigiGet Green | `#2F7A58` | Signature action, selected states, sync/positive cues, and brand mark. |
 | `paleGreen` | `#E6F1E9` | Soft selected/success backing and empty-state icon tile. |
 | `coral` | `#C97158` | Expense/destructive/emphasis color. Use alongside text or icon cues. |
 | `paleCoral` | `#FAEAE4` | Soft expense selection surface. |
@@ -103,7 +103,7 @@ Motion should be quiet, fast, and nonessential to comprehension; the product dir
 
 ## 8. Usage principles
 
-1. Lead with Pocket Leaf for the primary action or active state, not as a fill for every surface.
+1. Lead with DigiGet Green for the primary action or active state, not as a fill for every surface.
 2. Put dark ink on light paper/cards for reading; use muted only for secondary information, never key values or critical state.
 3. Pair category color with a category name, and income/expense color with explicit words, signs, or icons.
 4. Use whitespace, rounded cards, and subtle borders instead of heavy dividers or dense tables on phone screens.

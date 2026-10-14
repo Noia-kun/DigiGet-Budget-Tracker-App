@@ -25,7 +25,7 @@ async function startServer() {
   app.get("/", (_req, res) => {
     res.json({
       ok: true,
-      service: "Pocket Ledger API",
+      service: "DigiGet API",
       message: "Backend service is running. Use the mobile app to access your ledger.",
       health: "/api/health",
       api: "/api/trpc",

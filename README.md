@@ -1,4 +1,4 @@
-# Pocket Ledger
+# DigiGet
 
 A personal expense tracker built with Expo Router, React Native, TypeScript, and an Express/tRPC API. The app supports income/expense entry, categories, monthly summaries, offline-first local storage with server snapshot sync, reminders, and settings.
 

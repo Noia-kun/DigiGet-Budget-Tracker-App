@@ -1,4 +1,4 @@
-# Pocket Ledger — Delivery Outcomes
+# DigiGet — Delivery Outcomes
 
 - [x] **Onboarding, navigation, and preferences** — Deliver onboarding; provide intuitive phone-first navigation and the primary create/manage flows; include settings for relevant preferences and user-controlled notification controls. On first use explain the tracker briefly, capture the currency preference, then lead directly into the ledger; allow onboarding to be replayed.
 

@@ -1,6 +1,6 @@
-# Pocket Ledger UI Kit
+# DigiGet UI Kit
 
-A source export of the shipped Pocket Ledger UI components, ledger data contract, and design-token documentation.
+A source export of the shipped DigiGet UI components, ledger data contract, and design-token documentation.
 
 ## Contents
 

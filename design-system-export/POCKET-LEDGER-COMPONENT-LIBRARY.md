@@ -1,4 +1,4 @@
-# Pocket Ledger UI Component Library
+# DigiGet UI Component Library
 
 This export contains the app’s reusable React Native UI source, the shared ledger data contract it expects, and token references. It is a source bundle, not a separately versioned npm package. Components are designed for Expo/React Native, Expo Web, and `react-native-svg`.
 
@@ -35,7 +35,7 @@ Props: `name: string`, `size?: number` (default 20), `color?: ColorValue` (defau
 
 | Export | API / behavior |
 | --- | --- |
-| `BrandMark` | `size?: number` (default 34). Pocket Ledger green rounded-square mark with a book/leaf motif. |
+| `BrandMark` | `size?: number` (default 34). DigiGet green rounded-square mark with a book/leaf motif. |
 | `SyncBanner` | `state: "loading" \| "synced" \| "pending" \| "offline"`, `onRetry: () => void`. Hides for loading/synced; pending/offline states expose a retry button and explanatory copy. |
 | `MonthPicker` | `date: Date`, `onChange: (next: Date) => void`. Previous/next month controls. |
 | `TransactionRow` | `item: Transaction`, `category?: Category`, `currency: string`, `onPress: () => void`, `onDelete?: () => void`. Accessible edit row with optional delete action. |

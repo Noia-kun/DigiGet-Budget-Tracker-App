@@ -1,4 +1,4 @@
-# Pocket Ledger — Implementation Plan
+# DigiGet — Implementation Plan
 
 ## Product and implementation
 
@@ -21,7 +21,7 @@ Persist transactions, default and user-created categories, preferences, and onbo
 - **Brand Essence:** A quick, quietly reassuring money notebook for people who want to stay aware without turning finance into a chore. **Personality:** calm, capable, human.
 - **Brand Voice:** Plain-language, specific, non-judgmental. Headlines orient; actions say what happens; errors give the next step. Examples: “Your money, at a glance.” / “Saved on this phone. We’ll sync when you’re back online.”
 - **Wordmark & Logo:** A compact open ledger-book outline whose two pages form a subtle upward leaf/check shape; use the symbol without tiny text in native launcher assets and dashboard brand mark.
-- **Signature Brand Color:** Pocket Leaf, a saturated deep green (`#2F7A58`), used sparingly for the primary action, active navigation and positive balance cues.
+- **Signature Brand Color:** DigiGet Green, a saturated deep green (`#2F7A58`), used sparingly for the primary action, active navigation and positive balance cues.
 
 ## Project structure
 
@@ -33,7 +33,7 @@ Persist transactions, default and user-created categories, preferences, and onbo
 - `lib/trpc.ts`: Existing tRPC client transport used to call the ledger procedures.
 - `server/db.ts` and `server/routers.ts`: Device-scoped snapshot repository and validated tRPC read/write operations; do not log transaction contents or client IDs.
 - `drizzle/schema.ts` and `drizzle/`: Additive ledger-snapshot schema/migration; retain the supplied users table and migration history.
-- `assets/images/`: Distinct square brand/icon/splash/adaptive-icon variants matching the Pocket Ledger mark; keep adaptive foreground/background/monochrome and splash usage aligned through `app.config.ts`.
+- `assets/images/`: Distinct square brand/icon/splash/adaptive-icon variants matching the DigiGet mark; keep adaptive foreground/background/monochrome and splash usage aligned through `app.config.ts`.
 
 ## Constraints and dependencies
 
