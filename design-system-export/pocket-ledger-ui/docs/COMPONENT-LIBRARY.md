@@ -55,7 +55,7 @@ Shared styling exports: `C` is the canonical palette; `page.root`, `page.content
 <TransactionComposer
   visible={isOpen}
   categories={categories}
-  currency="USD"
+  currency="PHP"
   editing={transactionOrNull}
   onClose={closeSheet}
   onSave={saveTransaction}
@@ -66,7 +66,7 @@ Props: `visible: boolean`, `categories: Category[]`, `currency: string`, optiona
 
 ## Data contract
 
-`Transaction` uses `amountCents` (integer cents), `kind` (`expense` or `income`), category ID, note, ISO day string, and update timestamp. `Category` includes ID/name/kind/color/icon and optional `builtIn`. `Preferences` contains currency and reminder settings. `LedgerSnapshot` groups transactions, categories, preferences, onboarding completion, and update time. Default categories/prefs and formatting/month helpers are in `src/shared/ledger.ts`.
+`Transaction` uses `amountCents` (integer cents), `kind` (`expense` or `income`), category ID, note, ISO day string, and update timestamp. `Category` includes ID/name/kind/color/icon, optional `builtIn`, and optional `archived`. Archived categories are excluded from new-entry choices but retain their labels in history and reports; they may be restored, and remain selectable when editing an existing transaction that already uses them. `Preferences` contains currency and reminder settings. New installations default to PHP (Philippine peso); existing saved currency preferences are preserved. `LedgerSnapshot` groups transactions, categories, preferences, onboarding completion, and update time. Default categories/prefs and formatting/month helpers are in `src/shared/ledger.ts`.
 
 ## Screen-level composition in the app
 

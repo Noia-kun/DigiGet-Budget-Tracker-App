@@ -43,7 +43,11 @@ export function TransactionComposer({
   const [date, setDate] = useState(editing?.date ?? dateKey());
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const choices = categories.filter((category) => category.kind === kind);
+  const choices = categories.filter(
+    (category) =>
+      category.kind === kind &&
+      (!category.archived || category.id === editing?.categoryId),
+  );
   const activeCategoryId = choices.some(
     (category) => category.id === categoryId,
   )

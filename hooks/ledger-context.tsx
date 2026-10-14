@@ -29,6 +29,8 @@ type LedgerContextValue = {
   saveTransaction: (item: Transaction) => void;
   deleteTransaction: (id: string) => void;
   saveCategory: (category: Category) => void;
+  archiveCategory: (id: string) => boolean;
+  restoreCategory: (id: string) => void;
   updatePreferences: (patch: Partial<Preferences>) => void;
   finishOnboarding: () => void;
   restartOnboarding: () => void;
@@ -246,6 +248,35 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     },
     [writeSnapshot],
   );
+  const archiveCategory = useCallback(
+    (id: string) => {
+      const prior = latest.current;
+      const target = prior.categories.find((category) => category.id === id);
+      if (!target || target.archived) return false;
+      const activeCount = prior.categories.filter(
+        (category) => category.kind === target.kind && !category.archived,
+      ).length;
+      if (activeCount <= 1) return false;
+      const categories = prior.categories.map((category) =>
+        category.id === id ? { ...category, archived: true } : category,
+      );
+      void writeSnapshot({ ...prior, categories });
+      return true;
+    },
+    [writeSnapshot],
+  );
+  const restoreCategory = useCallback(
+    (id: string) => {
+      const prior = latest.current;
+      const target = prior.categories.find((category) => category.id === id);
+      if (!target?.archived) return;
+      const categories = prior.categories.map((category) =>
+        category.id === id ? { ...category, archived: false } : category,
+      );
+      void writeSnapshot({ ...prior, categories });
+    },
+    [writeSnapshot],
+  );
   const updatePreferences = useCallback(
     (patch: Partial<Preferences>) => {
       void writeSnapshot({
@@ -270,6 +301,8 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       saveTransaction,
       deleteTransaction,
       saveCategory,
+      archiveCategory,
+      restoreCategory,
       updatePreferences,
       finishOnboarding,
       restartOnboarding,
@@ -282,6 +315,8 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       saveTransaction,
       deleteTransaction,
       saveCategory,
+      archiveCategory,
+      restoreCategory,
       updatePreferences,
       finishOnboarding,
       restartOnboarding,

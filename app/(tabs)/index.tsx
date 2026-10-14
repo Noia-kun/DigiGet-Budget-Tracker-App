@@ -20,6 +20,8 @@ import {
 import { useLedger } from "@/hooks/ledger-context";
 import {
   formatMoney,
+  CURRENCIES,
+  DEFAULT_PREFERENCES,
   monthLabel,
   monthTransactions,
   monthTotals,
@@ -99,6 +101,7 @@ export default function HomeScreen() {
         />
         {!data.onboardingComplete ? (
           <Onboarding
+            initialCurrency={data.preferences.currency || DEFAULT_PREFERENCES.currency}
             onFinish={(currency) => {
               ledger.updatePreferences({ currency });
               ledger.finishOnboarding();
@@ -329,9 +332,15 @@ export default function HomeScreen() {
     </SafeAreaView>
   );
 }
-function Onboarding({ onFinish }: { onFinish: (currency: string) => void }) {
+function Onboarding({
+  initialCurrency,
+  onFinish,
+}: {
+  initialCurrency: string;
+  onFinish: (currency: string) => void;
+}) {
   const [step, setStep] = useState(0);
-  const [currency, setCurrency] = useState("USD");
+  const [currency, setCurrency] = useState(initialCurrency);
   const steps = [
     {
       icon: "book-outline" as const,
@@ -394,7 +403,7 @@ function Onboarding({ onFinish }: { onFinish: (currency: string) => void }) {
       </Text>
       {step === 2 && (
         <View style={styles.currencyWrap}>
-          {["USD", "EUR", "GBP", "CAD", "AUD", "JPY"].map((value) => (
+          {CURRENCIES.map((value) => (
             <Pressable
               key={value}
               onPress={() => setCurrency(value)}

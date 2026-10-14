@@ -18,3 +18,7 @@ Copy the `src` tree into your project. The sources assume the `@/` alias resolve
 ## Important distinction
 
 The app's actual ledger UI palette lives in `C` in `src/components/ledger/ui.tsx`. `src/theme/theme.config.js` documents the template-level semantic palette used by the broader theme provider; it is not currently the source for all ledger screen colors. Refer to the docs before changing either palette.
+
+## Currency and category lifecycle
+
+New installations start with Philippine pesos (`PHP`, `₱`); saved currency preferences for existing users remain unchanged. Category removal is recoverable: it hides the category from new entries while preserving historical labels and reports, and the category can be restored later.

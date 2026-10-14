@@ -9,3 +9,7 @@
 - [x] **Persistence and reminders** — Persist transactions, categories, preferences, and onboarding state reliably across app sessions. Keep local data available offline and recover/synchronize pending changes when connectivity returns. Let users enable, disable, or adjust reminders, request notification permission only with user intent, and handle denied or unsupported permissions clearly.
 
 - [x] **Responsive, accessible, resilient experience** — Design the key screens for a polished, accessible phone UI that adapts to available screen sizes. Cover loading, empty, offline, permission, error, success, and recovery states with clear status, next steps, and retry/undo paths where appropriate.
+
+- [x] **Philippine Peso availability and first-use default** — Add Philippine Peso (PHP) to the available currency choices; make PHP the default for a new installation's first use and onboarding selection, while keeping a currency preference already saved by an existing user unchanged.
+
+- [x] **Category removal with transaction-history preservation** — Let users remove a category from future category choices after confirmation. Preserve that category's label and metadata for existing transactions and reports, allow restoring it, keep archived categories available when editing a historical transaction, and do not allow removal of the final active category for an income or expense type.
