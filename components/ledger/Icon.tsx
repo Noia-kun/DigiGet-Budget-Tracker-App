@@ -126,6 +126,17 @@ export function Icon({ name, size = 20, color = "#17231C" }: Props) {
         </>
       );
       break;
+    case "flash-outline":
+      drawing = path("m13 2-9 12h7l-1 8 10-13h-7l1-7Z");
+      break;
+    case "sparkles-outline":
+      drawing = (
+        <>
+          {path("m12 3 1.5 5.5L19 10l-5.5 1.5L12 17l-1.5-5.5L5 10l5.5-1.5L12 3Z")}
+          {path("m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z")}
+        </>
+      );
+      break;
     case "restaurant-outline":
       drawing = (
         <>
