@@ -16,8 +16,9 @@ const categorySchema = z.object({
   color: z.string().regex(/^#[0-9a-fA-F]{6}$/),
   icon: z.string().min(1).max(64),
   builtIn: z.boolean().optional(),
+  archived: z.boolean().optional(),
 });
-const snapshotSchema = z.object({
+export const snapshotSchema = z.object({
   transactions: z
     .array(
       z.object({
