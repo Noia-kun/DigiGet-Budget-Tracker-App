@@ -14,7 +14,6 @@ import {
   page,
   shadow,
   SummaryMini,
-  SyncBanner,
   TransactionRow,
 } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
@@ -95,10 +94,6 @@ export default function HomeScreen() {
             <Icon name="person-outline" color={C.green} size={19} />
           </Pressable>
         </View>
-        <SyncBanner
-          state={ledger.syncState}
-          onRetry={() => void ledger.syncNow()}
-        />
         {!data.onboardingComplete ? (
           <Onboarding
             initialCurrency={data.preferences.currency || DEFAULT_PREFERENCES.currency}

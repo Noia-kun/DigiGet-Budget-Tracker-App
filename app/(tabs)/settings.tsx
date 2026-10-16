@@ -452,29 +452,9 @@ export default function SettingsScreen() {
               <Text style={styles.rowTitle}>
                 {itemCount} {itemCount === 1 ? "entry" : "entries"} saved
               </Text>
-              <Text style={styles.rowHint}>
-                Available on this phone; sync resumes when you’re online.
-              </Text>
+              <Text style={styles.rowHint}>Stored only on this phone.</Text>
             </View>
-            <Pressable
-              onPress={() => void ledger.syncNow()}
-              accessibilityRole="button"
-              style={styles.outlineBtn}
-            >
-              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
-                Sync now
-              </Text>
-            </Pressable>
           </View>
-          <Text style={styles.syncLabel}>
-            {ledger.syncState === "offline"
-              ? "Offline · your local entries are safe"
-              : ledger.syncState === "pending"
-                ? "Syncing changes…"
-                : ledger.syncState === "loading"
-                  ? "Opening your ledger…"
-                  : "All changes are synced"}
-          </Text>
         </View>
         <Pressable
           onPress={() => {
@@ -587,14 +567,6 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
   },
   dot: { width: 7, height: 7, borderRadius: 4 },
-  syncLabel: {
-    color: C.green,
-    fontSize: 12,
-    fontWeight: "600",
-    borderTopWidth: 1,
-    borderColor: C.line,
-    paddingTop: 12,
-  },
   categoryAction: {
     width: 30,
     height: 30,

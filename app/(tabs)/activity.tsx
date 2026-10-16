@@ -9,7 +9,6 @@ import {
   EmptyState,
   LoadingState,
   page,
-  SyncBanner,
   TextField,
   TransactionRow,
 } from "@/components/ledger/ui";
@@ -75,10 +74,6 @@ export default function ActivityScreen() {
           <Text style={page.title}>Activity</Text>
           <Text style={page.subtitle}>Every little thing, in one place.</Text>
         </View>
-        <SyncBanner
-          state={ledger.syncState}
-          onRetry={() => void ledger.syncNow()}
-        />
         <View style={styles.searchRow}>
           <Icon name="search-outline" size={18} color={C.muted} />
           <TextField
