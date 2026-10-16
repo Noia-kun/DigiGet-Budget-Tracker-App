@@ -1,6 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { AppState, Platform } from "react-native";
-import { trpc } from "@/lib/trpc";
 import {
   DEFAULT_CATEGORIES,
   DEFAULT_PREFERENCES,
@@ -20,11 +18,9 @@ import {
   type PropsWithChildren,
 } from "react";
 
-type SyncState = "loading" | "synced" | "pending" | "offline";
 type LedgerContextValue = {
   data: LedgerSnapshot;
   ready: boolean;
-  syncState: SyncState;
   onboardingComplete: boolean;
   saveTransaction: (item: Transaction) => void;
   deleteTransaction: (id: string) => void;
@@ -34,12 +30,9 @@ type LedgerContextValue = {
   updatePreferences: (patch: Partial<Preferences>) => void;
   finishOnboarding: () => void;
   restartOnboarding: () => void;
-  syncNow: () => Promise<void>;
 };
 const STORAGE_KEY = "pocket-ledger.v1";
 const LedgerContext = createContext<LedgerContextValue | null>(null);
-const makeDeviceId = () =>
-  `pl-${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`;
 const newSnapshot = (): LedgerSnapshot => ({
   transactions: [],
   categories: DEFAULT_CATEGORIES,
@@ -60,157 +53,34 @@ const looksLikeSnapshot = (value: unknown): value is LedgerSnapshot => {
 };
 
 export function LedgerProvider({ children }: PropsWithChildren) {
-  const api = trpc.useUtils();
-  const saveSnapshot = trpc.ledger.saveSnapshot.useMutation();
   const [data, setData] = useState<LedgerSnapshot>(newSnapshot);
   const [ready, setReady] = useState(false);
-  const [deviceId, setDeviceId] = useState("");
-  const [syncState, setSyncState] = useState<SyncState>("loading");
   const latest = useRef(data);
-  const syncQueue = useRef<Promise<void>>(Promise.resolve());
   useEffect(() => {
     latest.current = data;
   }, [data]);
 
-  const enqueue = useCallback((work: () => Promise<void>) => {
-    const task = syncQueue.current.then(work);
-    syncQueue.current = task.catch(() => undefined);
-    return task;
+  const writeSnapshot = useCallback(async (next: LedgerSnapshot) => {
+    const stamped = { ...next, updatedAt: new Date().toISOString() };
+    latest.current = stamped;
+    setData(stamped);
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ snapshot: stamped }));
+    } catch {}
   }, []);
 
-  const writeSnapshot = useCallback(
-    async (next: LedgerSnapshot) => {
-      const stamped = { ...next, updatedAt: new Date().toISOString() };
-      latest.current = stamped;
-      setData(stamped);
-      setSyncState("pending");
-      try {
-        const id = deviceId || makeDeviceId();
-        await AsyncStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ deviceId: id, snapshot: stamped }),
-        );
-        if (!deviceId) return;
-        await enqueue(async () => {
-          setSyncState("pending");
-          try {
-            // Read the latest snapshot when this queued write runs, so rapid edits
-            // cannot let an older request finish last and overwrite newer state.
-            await saveSnapshot.mutateAsync({
-              deviceId,
-              snapshot: JSON.stringify(latest.current),
-            });
-            setSyncState("synced");
-          } catch {
-            setSyncState("offline");
-          }
-        });
-      } catch {
-        setSyncState("offline");
-      }
-    },
-    [deviceId, enqueue, saveSnapshot.mutateAsync],
-  );
-
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const raw = await AsyncStorage.getItem(STORAGE_KEY);
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then((raw) => {
         const parsed = raw ? JSON.parse(raw) : null;
-        const id =
-          typeof parsed?.deviceId === "string"
-            ? parsed.deviceId
-            : makeDeviceId();
-        const local = looksLikeSnapshot(parsed?.snapshot)
-          ? parsed.snapshot
-          : newSnapshot();
-        if (!alive) return;
-        setDeviceId(id);
-        latest.current = local;
-        setData(local);
-        setReady(true);
-        setSyncState("pending");
-        await AsyncStorage.setItem(
-          STORAGE_KEY,
-          JSON.stringify({ deviceId: id, snapshot: local }),
-        );
-      } catch {
-        if (!alive) return;
-        setDeviceId(makeDeviceId());
-        setReady(true);
-        setSyncState("offline");
-      }
-    })();
-    return () => {
-      alive = false;
-    };
+        if (looksLikeSnapshot(parsed?.snapshot)) {
+          latest.current = parsed.snapshot;
+          setData(parsed.snapshot);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setReady(true));
   }, []);
-
-  const syncNow = useCallback(() => {
-    if (!deviceId) return Promise.resolve();
-    return enqueue(async () => {
-      setSyncState("pending");
-      try {
-        const localAtStart = latest.current;
-        const remote = await api.ledger.getSnapshot.fetch({ deviceId });
-        let remoteData: LedgerSnapshot | null = null;
-        if (remote?.snapshot) {
-          try {
-            const parsed: unknown = JSON.parse(remote.snapshot);
-            remoteData = looksLikeSnapshot(parsed) ? parsed : null;
-          } catch {
-            remoteData = null;
-          }
-        }
-        let local = latest.current;
-        // Adopt a newer remote snapshot only if no local edit arrived during the read.
-        if (
-          remoteData &&
-          new Date(remoteData.updatedAt).getTime() >
-            new Date(localAtStart.updatedAt).getTime() &&
-          latest.current.updatedAt === localAtStart.updatedAt
-        ) {
-          local = remoteData;
-          latest.current = remoteData;
-          setData(remoteData);
-          await AsyncStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({ deviceId, snapshot: remoteData }),
-          );
-        }
-        if (!remoteData || remoteData.updatedAt !== local.updatedAt) {
-          await saveSnapshot.mutateAsync({
-            deviceId,
-            snapshot: JSON.stringify(local),
-          });
-        }
-        setSyncState("synced");
-      } catch {
-        setSyncState("offline");
-      }
-    });
-  }, [api, deviceId, enqueue, saveSnapshot.mutateAsync]);
-
-  useEffect(() => {
-    if (ready && deviceId) void syncNow();
-  }, [ready, deviceId, syncNow]);
-  useEffect(() => {
-    const subscription = AppState.addEventListener("change", (state) => {
-      if (state === "active" && ready) void syncNow();
-    });
-    if (Platform.OS === "web" && typeof window !== "undefined") {
-      const reconnect = () => {
-        if (ready) void syncNow();
-      };
-      window.addEventListener("online", reconnect);
-      return () => {
-        subscription.remove();
-        window.removeEventListener("online", reconnect);
-      };
-    }
-    return () => subscription.remove();
-  }, [ready, syncNow]);
 
   const saveTransaction = useCallback(
     (item: Transaction) => {
@@ -296,7 +166,6 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     () => ({
       data,
       ready,
-      syncState,
       onboardingComplete: data.onboardingComplete,
       saveTransaction,
       deleteTransaction,
@@ -306,12 +175,10 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       updatePreferences,
       finishOnboarding,
       restartOnboarding,
-      syncNow,
     }),
     [
       data,
       ready,
-      syncState,
       saveTransaction,
       deleteTransaction,
       saveCategory,
@@ -320,7 +187,6 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       updatePreferences,
       finishOnboarding,
       restartOnboarding,
-      syncNow,
     ],
   );
   return (

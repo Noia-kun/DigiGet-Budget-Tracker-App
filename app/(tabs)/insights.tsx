@@ -9,7 +9,6 @@ import {
   LoadingState,
   MonthPicker,
   page,
-  SyncBanner,
 } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
 import {
@@ -64,10 +63,6 @@ export default function InsightsScreen() {
             Your patterns, without the pressure.
           </Text>
         </View>
-        <SyncBanner
-          state={ledger.syncState}
-          onRetry={() => void ledger.syncNow()}
-        />
         <MonthPicker date={month} onChange={setMonth} />
         <View style={styles.overview}>
           <Text
