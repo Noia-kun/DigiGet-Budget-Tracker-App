@@ -9,6 +9,7 @@ A personal income and expense tracker built with Expo Router, React Native, Type
 - Custom categories (archive/restore keeps history)
 - Currency preference (PHP by default) and daily reminders
 - First-use onboarding that can be replayed
+- JSON backup: export your data to a file and restore it from Settings
 
 ## Run locally
 
