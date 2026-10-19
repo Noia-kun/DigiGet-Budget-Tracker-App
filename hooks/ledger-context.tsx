@@ -17,6 +17,7 @@ import {
   useState,
   type PropsWithChildren,
 } from "react";
+import { Alert } from "react-native";
 
 type LedgerContextValue = {
   data: LedgerSnapshot;
@@ -66,7 +67,12 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     setData(stamped);
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({ snapshot: stamped }));
-    } catch {}
+    } catch {
+      Alert.alert(
+        "Couldn’t save",
+        "Your last change wasn’t saved to this phone. Free up storage and try again.",
+      );
+    }
   }, []);
 
   useEffect(() => {
