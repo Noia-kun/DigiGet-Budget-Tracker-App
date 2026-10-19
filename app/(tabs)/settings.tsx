@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Icon } from "@/components/ledger/Icon";
-import * as Notifications from "expo-notifications";
 import { useState } from "react";
 import {
   Platform,
@@ -14,7 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { C, ConfirmDialog, LoadingState, page, TextField } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
-import { CURRENCIES, currencySymbol, type Category, type TransactionKind } from "@/shared/ledger";
+import { CURRENCIES, currencySymbol, type Category, type TransactionKind, type LedgerSnapshot } from "@/shared/ledger";
+import { exportBackup, pickBackup } from "@/lib/backup";
 const REMINDER_KEY = "pocket-ledger.reminder-id";
 export default function SettingsScreen() {
   const router = useRouter();
@@ -25,12 +25,15 @@ export default function SettingsScreen() {
   const [categoryMessage, setCategoryMessage] = useState("");
   const [categoryMessageError, setCategoryMessageError] = useState(false);
   const [categoryToRemove, setCategoryToRemove] = useState<Category | null>(null);
+  const [dataMessage, setDataMessage] = useState("");
+  const [pendingImport, setPendingImport] = useState<LedgerSnapshot | null>(null);
   const saveReminder = async (
     enabled: boolean,
     time = ledger.data.preferences.reminderTime,
   ) => {
     if (!enabled) {
       try {
+        const Notifications = await import("expo-notifications");
         const id = await AsyncStorage.getItem(REMINDER_KEY);
         if (id) await Notifications.cancelScheduledNotificationAsync(id);
         await AsyncStorage.removeItem(REMINDER_KEY);
@@ -46,6 +49,7 @@ export default function SettingsScreen() {
       return;
     }
     try {
+      const Notifications = await import("expo-notifications");
       const current = await Notifications.getPermissionsAsync();
       const permission = current.granted
         ? current
@@ -157,6 +161,28 @@ export default function SettingsScreen() {
     ledger.restoreCategory(category.id);
     setCategoryMessageError(false);
     setCategoryMessage(`${category.name} restored to ${category.kind} categories.`);
+  };
+  const onExport = async () => {
+    try {
+      await exportBackup(ledger.data);
+      setDataMessage("");
+    } catch {
+      setDataMessage("We couldn’t create the backup. Try again on your phone.");
+    }
+  };
+  const onImport = async () => {
+    try {
+      const backup = await pickBackup();
+      if (backup === undefined) return;
+      if (backup === null) {
+        setDataMessage("That file isn’t a valid DigiGet backup.");
+        return;
+      }
+      setDataMessage("");
+      setPendingImport(backup);
+    } catch {
+      setDataMessage("We couldn’t read that file. Try again.");
+    }
   };
   if (!ledger.ready)
     return (
@@ -455,6 +481,38 @@ export default function SettingsScreen() {
               <Text style={styles.rowHint}>Stored only on this phone.</Text>
             </View>
           </View>
+          <View style={{ flexDirection: "row", gap: 9 }}>
+            <Pressable
+              onPress={() => void onExport()}
+              accessibilityRole="button"
+              style={styles.outlineBtn}
+            >
+              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+                Export backup
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => void onImport()}
+              accessibilityRole="button"
+              style={styles.outlineBtn}
+            >
+              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+                Import backup
+              </Text>
+            </Pressable>
+          </View>
+          {dataMessage ? (
+            <Text
+              accessibilityRole="alert"
+              style={{
+                color: dataMessage.startsWith("Backup restored") ? C.green : C.coral,
+                fontSize: 12,
+                marginTop: 10,
+              }}
+            >
+              {dataMessage}
+            </Text>
+          ) : null}
         </View>
         <Pressable
           onPress={() => {
@@ -482,6 +540,18 @@ export default function SettingsScreen() {
         confirmLabel="Remove category"
         onCancel={() => setCategoryToRemove(null)}
         onConfirm={removeCategory}
+      />
+      <ConfirmDialog
+        visible={!!pendingImport}
+        title="Replace your data?"
+        message={`This replaces everything on this phone with the backup (${pendingImport?.transactions.length ?? 0} entries). Export a backup first if you want to keep your current data.`}
+        confirmLabel="Replace data"
+        onCancel={() => setPendingImport(null)}
+        onConfirm={() => {
+          if (pendingImport) ledger.restoreSnapshot(pendingImport);
+          setPendingImport(null);
+          setDataMessage("Backup restored.");
+        }}
       />
     </SafeAreaView>
   );

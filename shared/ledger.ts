@@ -127,7 +127,10 @@ export const currencySymbol = (currency: string) =>
     AUD: "A$",
     JPY: "¥",
   })[currency] ?? `${currency} `;
-export function formatMoney(cents: number, currency = DEFAULT_PREFERENCES.currency) {
+export function formatMoney(
+  cents: number,
+  currency = DEFAULT_PREFERENCES.currency,
+) {
   const value = cents / 100;
   try {
     return new Intl.NumberFormat(undefined, {
@@ -156,3 +159,56 @@ export const monthTotals = (items: Transaction[]) =>
     },
     { income: 0, expense: 0 },
   );
+
+const isKind = (v: unknown) => v === "income" || v === "expense";
+const isTransaction = (v: unknown) => {
+  const t = v as Partial<Transaction> | null;
+  return (
+    !!t &&
+    typeof t.id === "string" &&
+    isKind(t.kind) &&
+    Number.isFinite(t.amountCents) &&
+    typeof t.categoryId === "string" &&
+    typeof t.note === "string" &&
+    typeof t.date === "string" &&
+    typeof t.updatedAt === "string"
+  );
+};
+const isCategory = (v: unknown) => {
+  const c = v as Partial<Category> | null;
+  return (
+    !!c &&
+    typeof c.id === "string" &&
+    typeof c.name === "string" &&
+    isKind(c.kind) &&
+    typeof c.color === "string" &&
+    typeof c.icon === "string"
+  );
+};
+
+export const makeBackup = (snapshot: LedgerSnapshot) =>
+  JSON.stringify({ app: "digiget", version: 1, snapshot });
+
+// Returns the snapshot, or null if the text is not a valid DigiGet backup.
+export function parseBackup(text: string): LedgerSnapshot | null {
+  try {
+    const parsed = JSON.parse(text);
+    const s = parsed?.snapshot as Partial<LedgerSnapshot> | undefined;
+    const p = s?.preferences as Partial<Preferences> | undefined;
+    const valid =
+      parsed?.app === "digiget" &&
+      !!s &&
+      Array.isArray(s.transactions) &&
+      s.transactions.every(isTransaction) &&
+      Array.isArray(s.categories) &&
+      s.categories.every(isCategory) &&
+      typeof p?.currency === "string" &&
+      typeof p?.reminderEnabled === "boolean" &&
+      typeof p?.reminderTime === "string" &&
+      typeof s.onboardingComplete === "boolean" &&
+      typeof s.updatedAt === "string";
+    return valid ? (s as LedgerSnapshot) : null;
+  } catch {
+    return null;
+  }
+}

@@ -20,7 +20,7 @@ Daily reminders use `expo-notifications`. Permission is requested only after the
 
 - One snapshot (transactions, categories, preferences, onboarding state) under `pocket-ledger.v1`.
 - Writes must never fail silently. A failed save has to be visible to the user.
-- Planned: JSON export/import backup, and an optional biometric app lock.
+- Backup: export/import a validated JSON file from Settings. Planned: an optional biometric app lock.
 - Never log or transmit transaction contents.
 
 ## Design
@@ -54,7 +54,7 @@ Daily reminders use `expo-notifications`. Permission is requested only after the
 
 ## Roadmap
 
-1. Backup: JSON export/import with validation, and visible save-failure handling.
+1. ~~Backup: JSON export/import with validation, and visible save-failure handling.~~ Done.
 2. Optional biometric lock.
 3. Preview APK via EAS Build, tested on a real phone.
 4. Later, if needed: accounts and sync (for example Supabase).
