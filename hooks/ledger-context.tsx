@@ -20,6 +20,7 @@ import {
 import { Alert } from "react-native";
 
 type LedgerContextValue = {
+  restoreSnapshot: (snapshot: LedgerSnapshot) => void;
   data: LedgerSnapshot;
   ready: boolean;
   onboardingComplete: boolean;
@@ -168,8 +169,15 @@ export function LedgerProvider({ children }: PropsWithChildren) {
   const restartOnboarding = useCallback(() => {
     void writeSnapshot({ ...latest.current, onboardingComplete: false });
   }, [writeSnapshot]);
+  const restoreSnapshot = useCallback(
+    (snapshot: LedgerSnapshot) => {
+      void writeSnapshot(snapshot);
+    },
+    [writeSnapshot],
+  );
   const value = useMemo(
     () => ({
+      restoreSnapshot,
       data,
       ready,
       onboardingComplete: data.onboardingComplete,
@@ -183,6 +191,7 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       restartOnboarding,
     }),
     [
+      restoreSnapshot,
       data,
       ready,
       saveTransaction,

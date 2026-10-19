@@ -13,8 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { C, ConfirmDialog, LoadingState, page, TextField } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
-import { CURRENCIES, currencySymbol, type Category, type TransactionKind } from "@/shared/ledger";
-import { exportBackup } from "@/lib/backup";
+import { CURRENCIES, currencySymbol, type Category, type TransactionKind, type LedgerSnapshot } from "@/shared/ledger";
+import { exportBackup, pickBackup } from "@/lib/backup";
 const REMINDER_KEY = "pocket-ledger.reminder-id";
 export default function SettingsScreen() {
   const router = useRouter();
@@ -26,6 +26,7 @@ export default function SettingsScreen() {
   const [categoryMessageError, setCategoryMessageError] = useState(false);
   const [categoryToRemove, setCategoryToRemove] = useState<Category | null>(null);
   const [dataMessage, setDataMessage] = useState("");
+  const [pendingImport, setPendingImport] = useState<LedgerSnapshot | null>(null);
   const saveReminder = async (
     enabled: boolean,
     time = ledger.data.preferences.reminderTime,
@@ -167,6 +168,20 @@ export default function SettingsScreen() {
       setDataMessage("");
     } catch {
       setDataMessage("We couldn’t create the backup. Try again on your phone.");
+    }
+  };
+  const onImport = async () => {
+    try {
+      const backup = await pickBackup();
+      if (backup === undefined) return;
+      if (backup === null) {
+        setDataMessage("That file isn’t a valid DigiGet backup.");
+        return;
+      }
+      setDataMessage("");
+      setPendingImport(backup);
+    } catch {
+      setDataMessage("We couldn’t read that file. Try again.");
     }
   };
   if (!ledger.ready)
@@ -466,24 +481,39 @@ export default function SettingsScreen() {
               <Text style={styles.rowHint}>Stored only on this phone.</Text>
             </View>
           </View>
-        </View>
-        <Pressable
-            onPress={() => void onExport()}
-            accessibilityRole="button"
-            style={[styles.outlineBtn, { alignSelf: "flex-start" }]}
-          >
-            <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
-              Export backup
-            </Text>
-          </Pressable>
+          <View style={{ flexDirection: "row", gap: 9 }}>
+            <Pressable
+              onPress={() => void onExport()}
+              accessibilityRole="button"
+              style={styles.outlineBtn}
+            >
+              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+                Export backup
+              </Text>
+            </Pressable>
+            <Pressable
+              onPress={() => void onImport()}
+              accessibilityRole="button"
+              style={styles.outlineBtn}
+            >
+              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+                Import backup
+              </Text>
+            </Pressable>
+          </View>
           {dataMessage ? (
             <Text
               accessibilityRole="alert"
-              style={{ color: C.coral, fontSize: 12, marginTop: 10 }}
+              style={{
+                color: dataMessage.startsWith("Backup restored") ? C.green : C.coral,
+                fontSize: 12,
+                marginTop: 10,
+              }}
             >
               {dataMessage}
             </Text>
           ) : null}
+        </View>
         <Pressable
           onPress={() => {
             ledger.restartOnboarding();
@@ -510,6 +540,18 @@ export default function SettingsScreen() {
         confirmLabel="Remove category"
         onCancel={() => setCategoryToRemove(null)}
         onConfirm={removeCategory}
+      />
+      <ConfirmDialog
+        visible={!!pendingImport}
+        title="Replace your data?"
+        message={`This replaces everything on this phone with the backup (${pendingImport?.transactions.length ?? 0} entries). Export a backup first if you want to keep your current data.`}
+        confirmLabel="Replace data"
+        onCancel={() => setPendingImport(null)}
+        onConfirm={() => {
+          if (pendingImport) ledger.restoreSnapshot(pendingImport);
+          setPendingImport(null);
+          setDataMessage("Backup restored.");
+        }}
       />
     </SafeAreaView>
   );
