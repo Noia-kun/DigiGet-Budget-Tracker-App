@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Icon } from "@/components/ledger/Icon";
-import * as Notifications from "expo-notifications";
 import { useState } from "react";
 import {
   Platform,
@@ -15,6 +14,7 @@ import { useRouter } from "expo-router";
 import { C, ConfirmDialog, LoadingState, page, TextField } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
 import { CURRENCIES, currencySymbol, type Category, type TransactionKind } from "@/shared/ledger";
+import { exportBackup } from "@/lib/backup";
 const REMINDER_KEY = "pocket-ledger.reminder-id";
 export default function SettingsScreen() {
   const router = useRouter();
@@ -25,12 +25,14 @@ export default function SettingsScreen() {
   const [categoryMessage, setCategoryMessage] = useState("");
   const [categoryMessageError, setCategoryMessageError] = useState(false);
   const [categoryToRemove, setCategoryToRemove] = useState<Category | null>(null);
+  const [dataMessage, setDataMessage] = useState("");
   const saveReminder = async (
     enabled: boolean,
     time = ledger.data.preferences.reminderTime,
   ) => {
     if (!enabled) {
       try {
+        const Notifications = await import("expo-notifications");
         const id = await AsyncStorage.getItem(REMINDER_KEY);
         if (id) await Notifications.cancelScheduledNotificationAsync(id);
         await AsyncStorage.removeItem(REMINDER_KEY);
@@ -46,6 +48,7 @@ export default function SettingsScreen() {
       return;
     }
     try {
+      const Notifications = await import("expo-notifications");
       const current = await Notifications.getPermissionsAsync();
       const permission = current.granted
         ? current
@@ -157,6 +160,14 @@ export default function SettingsScreen() {
     ledger.restoreCategory(category.id);
     setCategoryMessageError(false);
     setCategoryMessage(`${category.name} restored to ${category.kind} categories.`);
+  };
+  const onExport = async () => {
+    try {
+      await exportBackup(ledger.data);
+      setDataMessage("");
+    } catch {
+      setDataMessage("We couldn’t create the backup. Try again on your phone.");
+    }
   };
   if (!ledger.ready)
     return (
@@ -456,6 +467,23 @@ export default function SettingsScreen() {
             </View>
           </View>
         </View>
+        <Pressable
+            onPress={() => void onExport()}
+            accessibilityRole="button"
+            style={[styles.outlineBtn, { alignSelf: "flex-start" }]}
+          >
+            <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+              Export backup
+            </Text>
+          </Pressable>
+          {dataMessage ? (
+            <Text
+              accessibilityRole="alert"
+              style={{ color: C.coral, fontSize: 12, marginTop: 10 }}
+            >
+              {dataMessage}
+            </Text>
+          ) : null}
         <Pressable
           onPress={() => {
             ledger.restartOnboarding();
