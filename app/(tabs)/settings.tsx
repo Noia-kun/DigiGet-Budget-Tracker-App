@@ -15,6 +15,8 @@ import { C, ConfirmDialog, LoadingState, page, TextField } from "@/components/le
 import { useLedger } from "@/hooks/ledger-context";
 import { CURRENCIES, currencySymbol, type Category, type TransactionKind, type LedgerSnapshot } from "@/shared/ledger";
 import { exportBackup, pickBackup } from "@/lib/backup";
+import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+
 const REMINDER_KEY = "pocket-ledger.reminder-id";
 export default function SettingsScreen() {
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function SettingsScreen() {
     }
     if (Platform.OS === "web") {
       setPermissionMessage(
-        "Reminders are scheduled on your phone. Open this app in Expo Go to enable device notifications.",
+        "Reminders are scheduled on your phone. Open the DigiGet app on your phone to set one.",
       );
       return;
     }
@@ -184,6 +186,32 @@ export default function SettingsScreen() {
       setDataMessage("We couldn’t read that file. Try again.");
     }
   };
+  const [hh, mm] = ledger.data.preferences.reminderTime.split(":").map(Number);
+  const reminderDate = new Date();
+  reminderDate.setHours(hh || 0, mm || 0, 0, 0);
+  const reminderLabel = reminderDate.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+  });
+  const onPickTime = (_: unknown, picked?: Date) => {
+    if (!picked) return;
+    const pad = (n: number) => String(n).padStart(2, "0");
+    void saveReminder(true, `${pad(picked.getHours())}:${pad(picked.getMinutes())}`);
+  };
+  const openTimePicker = () => {
+    if (Platform.OS !== "android") {
+      void saveReminder(true);
+      return;
+    }
+    DateTimePickerAndroid.open({
+      value: reminderDate,
+      mode: "time",
+      is24Hour: false,
+      onChange: (event, date) => {
+        if (event.type === "set") onPickTime(event, date);
+      },
+    });
+  };
   if (!ledger.ready)
     return (
       <SafeAreaView style={page.root}>
@@ -291,26 +319,20 @@ export default function SettingsScreen() {
             <Text style={{ color: C.muted, fontWeight: "600", fontSize: 13 }}>
               Reminder time
             </Text>
-            <TextField
-              value={ledger.data.preferences.reminderTime}
-              onChangeText={(value: string) =>
-                ledger.updatePreferences({ reminderTime: value })
-              }
-              placeholder="20:00"
-              accessibilityLabel="Reminder time in 24-hour format"
-              style={{ flex: 1, maxWidth: 112, minHeight: 41 }}
-            />
-            <Pressable
-              onPress={() =>
-                void saveReminder(true, ledger.data.preferences.reminderTime)
-              }
-              accessibilityRole="button"
-              style={styles.outlineBtn}
-            >
-              <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
-                Save time
-              </Text>
-            </Pressable>
+            {Platform.OS === "ios" ? (
+              <DateTimePicker value={reminderDate} mode="time" onChange={onPickTime} />
+            ) : (
+              <Pressable
+                onPress={openTimePicker}
+                accessibilityRole="button"
+                accessibilityLabel={`Reminder time ${reminderLabel}. Change`}
+                style={styles.outlineBtn}
+              >
+                <Text style={{ color: C.green, fontWeight: "700", fontSize: 12 }}>
+                  {reminderLabel}
+                </Text>
+              </Pressable>
+            )}
           </View>
           {permissionMessage ? (
             <Text
