@@ -1,4 +1,3 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Icon } from "@/components/ledger/Icon";
 import { useState } from "react";
 import {
@@ -17,7 +16,6 @@ import { CURRENCIES, currencySymbol, type Category, type TransactionKind, type L
 import { exportBackup, pickBackup } from "@/lib/backup";
 import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
-const REMINDER_KEY = "pocket-ledger.reminder-id";
 export default function SettingsScreen() {
   const router = useRouter();
   const ledger = useLedger();
@@ -36,9 +34,7 @@ export default function SettingsScreen() {
     if (!enabled) {
       try {
         const Notifications = await import("expo-notifications");
-        const id = await AsyncStorage.getItem(REMINDER_KEY);
-        if (id) await Notifications.cancelScheduledNotificationAsync(id);
-        await AsyncStorage.removeItem(REMINDER_KEY);
+        await Notifications.cancelAllScheduledNotificationsAsync();
       } catch {}
       ledger.updatePreferences({ reminderEnabled: false });
       setPermissionMessage("Reminder turned off.");
@@ -83,9 +79,8 @@ export default function SettingsScreen() {
           vibrationPattern: [0, 250, 250, 250],
           lightColor: "#2F7A58",
         });
-      const oldId = await AsyncStorage.getItem(REMINDER_KEY);
-      if (oldId) await Notifications.cancelScheduledNotificationAsync(oldId);
-      const id = await Notifications.scheduleNotificationAsync({
+      await Notifications.cancelAllScheduledNotificationsAsync();
+      await Notifications.scheduleNotificationAsync({
         content: {
           title: "A minute for your money?",
           body: "Log today's spending while it’s still fresh.",
@@ -98,7 +93,6 @@ export default function SettingsScreen() {
           minute,
         },
       });
-      await AsyncStorage.setItem(REMINDER_KEY, id);
       ledger.updatePreferences({ reminderEnabled: true, reminderTime: time });
       setPermissionMessage(`Daily reminder set for ${time}.`);
     } catch {
