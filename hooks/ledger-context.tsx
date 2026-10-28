@@ -6,7 +6,9 @@ import {
   type LedgerSnapshot,
   type Preferences,
   type Transaction,
+  withTransactionCurrency,
 } from "@/shared/ledger";
+import { convertTransactions } from "@/shared/rates";
 import {
   createContext,
   useCallback,
@@ -22,6 +24,7 @@ import { Alert } from "react-native";
 type LedgerContextValue = {
   restoreSnapshot: (snapshot: LedgerSnapshot) => void;
   data: LedgerSnapshot;
+  converted: Transaction[];
   ready: boolean;
   onboardingComplete: boolean;
   saveTransaction: (item: Transaction) => void;
@@ -81,8 +84,9 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       .then((raw) => {
         const parsed = raw ? JSON.parse(raw) : null;
         if (looksLikeSnapshot(parsed?.snapshot)) {
-          latest.current = parsed.snapshot;
-          setData(parsed.snapshot);
+          const migrated = withTransactionCurrency(parsed.snapshot);
+          latest.current = migrated;
+          setData(migrated);
         }
       })
       .catch(() => {})
@@ -171,14 +175,19 @@ export function LedgerProvider({ children }: PropsWithChildren) {
   }, [writeSnapshot]);
   const restoreSnapshot = useCallback(
     (snapshot: LedgerSnapshot) => {
-      void writeSnapshot(snapshot);
+      void writeSnapshot(withTransactionCurrency(snapshot));
     },
     [writeSnapshot],
+  );
+  const converted = useMemo(
+    () => convertTransactions(data.transactions, data.preferences.currency),
+    [data.transactions, data.preferences.currency],
   );
   const value = useMemo(
     () => ({
       restoreSnapshot,
       data,
+      converted,
       ready,
       onboardingComplete: data.onboardingComplete,
       saveTransaction,
@@ -193,6 +202,7 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     [
       restoreSnapshot,
       data,
+      converted,
       ready,
       saveTransaction,
       deleteTransaction,

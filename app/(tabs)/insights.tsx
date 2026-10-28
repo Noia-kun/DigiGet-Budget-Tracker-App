@@ -20,14 +20,14 @@ import {
 export default function InsightsScreen() {
   const ledger = useLedger();
   const [month, setMonth] = useState(() => new Date());
-  const current = monthTransactions(ledger.data.transactions, month);
+  const current = monthTransactions(ledger.converted, month);
   const totals = monthTotals(current);
   const priorDate = useMemo(
     () => new Date(month.getFullYear(), month.getMonth() - 1, 1),
     [month],
   );
   const prior = monthTotals(
-    monthTransactions(ledger.data.transactions, priorDate),
+    monthTransactions(ledger.converted, priorDate),
   );
   const categoryTotals = ledger.data.categories
     .filter((cat) => cat.kind === "expense")

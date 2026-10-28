@@ -101,63 +101,7 @@ export function BrandMark({ size = 34 }: { size?: number }) {
     </View>
   );
 }
-export function SyncBanner({
-  state,
-  onRetry,
-}: {
-  state: "loading" | "synced" | "pending" | "offline";
-  onRetry: () => void;
-}) {
-  if (state === "synced" || state === "loading") return null;
-  const offline = state === "offline";
-  return (
-    <Pressable
-      onPress={onRetry}
-      accessibilityRole="button"
-      accessibilityLabel={
-        offline
-          ? "Offline. Tap to retry synchronization."
-          : "Changes are saved on this device. Tap to sync."
-      }
-      style={{
-        backgroundColor: offline ? "#FFF2E8" : "#EDF3E8",
-        borderRadius: 13,
-        paddingHorizontal: 13,
-        paddingVertical: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-      }}
-    >
-      <Icon
-        name={offline ? "cloud-offline-outline" : "cloud-upload-outline"}
-        size={16}
-        color={offline ? C.coral : C.green}
-      />
-      <Text
-        style={{
-          flex: 1,
-          color: offline ? "#96533E" : C.green,
-          fontSize: 12,
-          fontWeight: "600",
-        }}
-      >
-        {offline
-          ? "Offline · saved on this device"
-          : "Saved here · syncing your ledger"}
-      </Text>
-      <Text
-        style={{
-          color: offline ? C.coral : C.green,
-          fontSize: 12,
-          fontWeight: "700",
-        }}
-      >
-        Retry
-      </Text>
-    </Pressable>
-  );
-}
+
 export function MonthPicker({
   date,
   onChange,

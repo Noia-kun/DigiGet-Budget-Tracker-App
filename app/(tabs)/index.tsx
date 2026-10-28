@@ -40,7 +40,7 @@ export default function HomeScreen() {
       </View>
     );
   const { data } = ledger;
-  const monthItems = monthTransactions(data.transactions, month);
+  const monthItems = monthTransactions(ledger.converted, month);
   const totals = monthTotals(monthItems);
   const spent = monthItems.filter((item) => item.kind === "expense");
   const top = data.categories
@@ -285,7 +285,9 @@ export default function HomeScreen() {
                       (category) => category.id === item.categoryId,
                     )}
                     currency={data.preferences.currency}
-                    onPress={() => setEditing(item)}
+                    onPress={() =>
+                      setEditing(data.transactions.find((t) => t.id === item.id) ?? null)
+                    }
                   />
                 ))
               ) : (

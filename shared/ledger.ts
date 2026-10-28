@@ -7,6 +7,7 @@ export type Transaction = {
   note: string;
   date: string;
   updatedAt: string;
+  currency?: string;
 };
 export type Category = {
   id: string;
@@ -116,10 +117,11 @@ export const EMPTY_SNAPSHOT: LedgerSnapshot = {
   onboardingComplete: false,
   updatedAt: new Date(0).toISOString(),
 };
-export const CURRENCIES = ["PHP", "USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
+export const CURRENCIES = ["PHP", "QAR", "USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
 export const currencySymbol = (currency: string) =>
   ({
     PHP: "₱",
+    QAR: "QR",
     USD: "$",
     EUR: "€",
     GBP: "£",
@@ -171,6 +173,7 @@ const isTransaction = (v: unknown) => {
     typeof t.categoryId === "string" &&
     typeof t.note === "string" &&
     typeof t.date === "string" &&
+    (t.currency === undefined || typeof t.currency === "string") &&
     typeof t.updatedAt === "string"
   );
 };
@@ -212,3 +215,13 @@ export function parseBackup(text: string): LedgerSnapshot | null {
     return null;
   }
 }
+// Entries saved before per-transaction currency existed get the snapshot's currency.
+export const withTransactionCurrency = (s: LedgerSnapshot): LedgerSnapshot => {
+  const fallback = s.preferences?.currency || DEFAULT_PREFERENCES.currency;
+  return {
+    ...s,
+    transactions: s.transactions.map((t) =>
+      t.currency ? t : { ...t, currency: fallback },
+    ),
+  };
+};
