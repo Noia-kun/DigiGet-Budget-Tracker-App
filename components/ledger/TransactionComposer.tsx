@@ -43,6 +43,7 @@ export function TransactionComposer({
   const [date, setDate] = useState(editing?.date ?? dateKey());
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
+  const entryCurrency = editing?.currency ?? currency;
   const choices = categories.filter(
     (category) =>
       category.kind === kind &&
@@ -87,6 +88,7 @@ export function TransactionComposer({
       categoryId: activeCategoryId,
       note: note.trim(),
       date,
+      currency: entryCurrency,
       updatedAt: new Date().toISOString(),
     };
     onSave(item);
@@ -173,7 +175,7 @@ export function TransactionComposer({
             <Text style={styles.fieldLabel}>AMOUNT</Text>
             <View style={styles.amountWrap}>
               <Text style={{ color: C.green, fontSize: 28, fontWeight: "700" }}>
-                {currencySymbol(currency)}
+                {currencySymbol(entryCurrency)}
               </Text>
               <TextField
                 value={amount}
@@ -252,7 +254,7 @@ export function TransactionComposer({
           ) : null}
           {saved ? (
             <Text accessibilityLiveRegion="polite" style={styles.success}>
-              Saved on this phone. Sync will resume when you’re online.
+              Saved on this phone.
             </Text>
           ) : null}
           <Pressable

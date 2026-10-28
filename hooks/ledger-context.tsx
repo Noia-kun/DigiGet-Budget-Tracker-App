@@ -6,6 +6,7 @@ import {
   type LedgerSnapshot,
   type Preferences,
   type Transaction,
+  withTransactionCurrency,
 } from "@/shared/ledger";
 import {
   createContext,
@@ -81,8 +82,9 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       .then((raw) => {
         const parsed = raw ? JSON.parse(raw) : null;
         if (looksLikeSnapshot(parsed?.snapshot)) {
-          latest.current = parsed.snapshot;
-          setData(parsed.snapshot);
+          const migrated = withTransactionCurrency(parsed.snapshot);
+          latest.current = migrated;
+          setData(migrated);
         }
       })
       .catch(() => {})
@@ -171,7 +173,7 @@ export function LedgerProvider({ children }: PropsWithChildren) {
   }, [writeSnapshot]);
   const restoreSnapshot = useCallback(
     (snapshot: LedgerSnapshot) => {
-      void writeSnapshot(snapshot);
+      void writeSnapshot(withTransactionCurrency(snapshot));
     },
     [writeSnapshot],
   );
