@@ -29,7 +29,7 @@ export default function ActivityScreen() {
   const [deleting, setDeleting] = useState<Transaction | null>(null);
   const results = useMemo(
     () =>
-      ledger.data.transactions
+      ledger.converted
         .filter((item) => {
           const label =
             ledger.data.categories.find((cat) => cat.id === item.categoryId)
@@ -51,7 +51,7 @@ export default function ActivityScreen() {
             b.date.localeCompare(a.date) ||
             b.updatedAt.localeCompare(a.updatedAt),
         ),
-    [ledger.data, query, kind, category, from, to, min, max],
+    [ledger.data, ledger.converted, query, kind, category, from, to, min, max],
   );
   if (!ledger.ready)
     return (
@@ -256,7 +256,11 @@ export default function ActivityScreen() {
                       (cat) => cat.id === item.categoryId,
                     )}
                     currency={ledger.data.preferences.currency}
-                    onPress={() => setEditing(item)}
+                    onPress={() =>
+                      setEditing(
+                        ledger.data.transactions.find((t) => t.id === item.id) ?? null,
+                      )
+                    }
                     onDelete={() => setDeleting(item)}
                   />
                 ))}
@@ -281,7 +285,7 @@ export default function ActivityScreen() {
       <ConfirmDialog
         visible={!!deleting}
         title="Remove this entry?"
-        message="This will remove it from your ledger and sync the change. This can’t be undone."
+        message="This will remove it from your ledger. This can’t be undone."
         onCancel={() => setDeleting(null)}
         onConfirm={() => {
           if (deleting) ledger.deleteTransaction(deleting.id);

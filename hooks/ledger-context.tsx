@@ -8,6 +8,7 @@ import {
   type Transaction,
   withTransactionCurrency,
 } from "@/shared/ledger";
+import { convertTransactions } from "@/shared/rates";
 import {
   createContext,
   useCallback,
@@ -23,6 +24,7 @@ import { Alert } from "react-native";
 type LedgerContextValue = {
   restoreSnapshot: (snapshot: LedgerSnapshot) => void;
   data: LedgerSnapshot;
+  converted: Transaction[];
   ready: boolean;
   onboardingComplete: boolean;
   saveTransaction: (item: Transaction) => void;
@@ -177,10 +179,15 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     },
     [writeSnapshot],
   );
+  const converted = useMemo(
+    () => convertTransactions(data.transactions, data.preferences.currency),
+    [data.transactions, data.preferences.currency],
+  );
   const value = useMemo(
     () => ({
       restoreSnapshot,
       data,
+      converted,
       ready,
       onboardingComplete: data.onboardingComplete,
       saveTransaction,
@@ -195,6 +202,7 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     [
       restoreSnapshot,
       data,
+      converted,
       ready,
       saveTransaction,
       deleteTransaction,

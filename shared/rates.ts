@@ -1,3 +1,5 @@
+import type { Transaction } from "./ledger";
+
 export type Rates = Record<string, number>;
 
 // Units of each currency per 1 USD. Approximate offline fallback (mid-2026);
@@ -24,4 +26,20 @@ export function convertCents(
   const toRate = rates[to];
   if (!fromRate || !toRate) return cents; // unknown currency: leave unconverted
   return Math.round((cents / fromRate) * toRate);
+}
+
+export function convertTransactions(
+  items: Transaction[],
+  display: string,
+  rates: Rates = FALLBACK_RATES,
+): Transaction[] {
+  return items.map((t) => {
+    const from = t.currency ?? display;
+    if (from === display) return t;
+    return {
+      ...t,
+      amountCents: convertCents(t.amountCents, from, display, rates),
+      currency: display,
+    };
+  });
 }
