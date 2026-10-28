@@ -116,10 +116,11 @@ export const EMPTY_SNAPSHOT: LedgerSnapshot = {
   onboardingComplete: false,
   updatedAt: new Date(0).toISOString(),
 };
-export const CURRENCIES = ["PHP", "USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
+export const CURRENCIES = ["PHP", "QAR", "USD", "EUR", "GBP", "CAD", "AUD", "JPY"];
 export const currencySymbol = (currency: string) =>
   ({
     PHP: "₱",
+    QAR: "QR",
     USD: "$",
     EUR: "€",
     GBP: "£",
