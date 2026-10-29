@@ -8,7 +8,8 @@ import {
   type Transaction,
   withTransactionCurrency,
 } from "@/shared/ledger";
-import { convertTransactions } from "@/shared/rates";
+import { FALLBACK_RATES, convertTransactions, type Rates } from "@/shared/rates";
+import { STALE_MS, fetchLiveRates, loadCachedRates } from "@/lib/rates-store";
 import {
   createContext,
   useCallback,
@@ -25,6 +26,7 @@ type LedgerContextValue = {
   restoreSnapshot: (snapshot: LedgerSnapshot) => void;
   data: LedgerSnapshot;
   converted: Transaction[];
+  ratesUpdatedAt: number | null;
   ready: boolean;
   onboardingComplete: boolean;
   saveTransaction: (item: Transaction) => void;
@@ -60,6 +62,27 @@ const looksLikeSnapshot = (value: unknown): value is LedgerSnapshot => {
 export function LedgerProvider({ children }: PropsWithChildren) {
   const [data, setData] = useState<LedgerSnapshot>(newSnapshot);
   const [ready, setReady] = useState(false);
+  const [rates, setRates] = useState<Rates>(FALLBACK_RATES);
+  const [ratesUpdatedAt, setRatesUpdatedAt] = useState<number | null>(null);
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      const cached = await loadCachedRates();
+      if (cached && alive) {
+        setRates(cached.rates);
+        setRatesUpdatedAt(cached.fetchedAt);
+      }
+      if (cached && Date.now() - cached.fetchedAt < STALE_MS) return;
+      const live = await fetchLiveRates();
+      if (live && alive) {
+        setRates(live.rates);
+        setRatesUpdatedAt(live.fetchedAt);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
   const latest = useRef(data);
   useEffect(() => {
     latest.current = data;
@@ -180,14 +203,15 @@ export function LedgerProvider({ children }: PropsWithChildren) {
     [writeSnapshot],
   );
   const converted = useMemo(
-    () => convertTransactions(data.transactions, data.preferences.currency),
-    [data.transactions, data.preferences.currency],
+    () => convertTransactions(data.transactions, data.preferences.currency, rates),
+    [data.transactions, data.preferences.currency, rates],
   );
   const value = useMemo(
     () => ({
       restoreSnapshot,
       data,
       converted,
+      ratesUpdatedAt,
       ready,
       onboardingComplete: data.onboardingComplete,
       saveTransaction,
@@ -203,6 +227,7 @@ export function LedgerProvider({ children }: PropsWithChildren) {
       restoreSnapshot,
       data,
       converted,
+      ratesUpdatedAt,
       ready,
       saveTransaction,
       deleteTransaction,

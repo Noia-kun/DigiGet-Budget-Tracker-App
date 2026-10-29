@@ -1,6 +1,7 @@
 import { Icon } from "@/components/ledger/Icon";
 import { useState } from "react";
 import {
+  Linking,
   Platform,
   Pressable,
   ScrollView,
@@ -268,6 +269,20 @@ export default function SettingsScreen() {
               </Pressable>
             ))}
           </View>
+          <Text style={styles.rowHint}>
+            {ledger.ratesUpdatedAt
+              ? `Exchange rates updated ${new Date(ledger.ratesUpdatedAt).toLocaleDateString()}.`
+              : "Using approximate offline rates. Connect to the internet to update."}{" "}
+            Entries in other currencies are converted at these rates.
+          </Text>
+          <Pressable
+            onPress={() => void Linking.openURL("https://www.exchangerate-api.com")}
+            accessibilityRole="link"
+          >
+            <Text style={[styles.rowHint, { color: C.green }]}>
+              Rates by Exchange Rate API
+            </Text>
+          </Pressable>
         </View>
         <View style={page.card}>
           <View style={styles.settingRow}>

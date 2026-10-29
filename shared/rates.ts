@@ -1,4 +1,4 @@
-import type { Transaction } from "./ledger";
+import { CURRENCIES, type Transaction } from "./ledger";
 
 export type Rates = Record<string, number>;
 
@@ -42,4 +42,20 @@ export function convertTransactions(
       currency: display,
     };
   });
+}
+
+// Overlays valid live values onto the bundled table. Returns null if nothing usable.
+export function mergeRates(live: unknown): Rates | null {
+  const source = (live as { rates?: Record<string, unknown> } | null)?.rates;
+  if (!source || typeof source !== "object") return null;
+  const out: Rates = { ...FALLBACK_RATES };
+  let any = false;
+  for (const code of CURRENCIES) {
+    const value = source[code];
+    if (typeof value === "number" && Number.isFinite(value) && value > 0) {
+      out[code] = value;
+      any = true;
+    }
+  }
+  return any ? out : null;
 }
