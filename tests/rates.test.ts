@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { convertCents, convertTransactions } from "../shared/rates";
+import { FALLBACK_RATES, convertCents, convertTransactions, mergeRates } from "../shared/rates";
 
 const rates = { USD: 1, QAR: 3.64, PHP: 58 };
 
@@ -35,5 +35,19 @@ describe("convertTransactions", () => {
     expect(out.map((t) => t.amountCents)).toEqual([100, 100]);
     expect(out.every((t) => t.currency === "USD")).toBe(true);
     expect(items[0].amountCents).toBe(5800);
+  });
+});
+
+describe("mergeRates", () => {
+  it("applies valid live values and keeps the bundled ones for bad values", () => {
+    const out = mergeRates({ rates: { PHP: 60, EUR: "x", GBP: -1 } });
+    expect(out?.PHP).toBe(60);
+    expect(out?.EUR).toBe(FALLBACK_RATES.EUR);
+    expect(out?.GBP).toBe(FALLBACK_RATES.GBP);
+  });
+  it("rejects malformed responses", () => {
+    expect(mergeRates(null)).toBeNull();
+    expect(mergeRates({})).toBeNull();
+    expect(mergeRates({ rates: {} })).toBeNull();
   });
 });
