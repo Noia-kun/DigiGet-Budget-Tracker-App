@@ -10,7 +10,7 @@ The main experience is a dashboard with a month selector, balance/income/expense
 - **Insights:** selected-month summary and category breakdown.
 - **Settings:** currency, notification permission/schedule, custom categories, onboarding replay.
 - **First launch:** short skippable three-step introduction and currency choice, then an empty ledger with a clear first-entry action.
-- **Currency:** Philippine Peso (PHP) is the default for new installs; a saved preference is never overwritten.
+- **Currency:** PHP is the default for new installs. Each entry stores its own currency; the Settings currency is the display currency, and amounts are converted at read time with live rates (cached, with a bundled offline fallback). Stored amounts are never converted.
 
 Removing a category archives it: it disappears from new-entry choices, keeps its metadata for past transactions and reports, and can be restored. At least one active category per type must remain.
 
@@ -22,6 +22,7 @@ Daily reminders use `expo-notifications`. Permission is requested only after the
 - Writes must never fail silently. A failed save has to be visible to the user.
 - Backup: export/import a validated JSON file from Settings. Planned: an optional biometric app lock.
 - Never log or transmit transaction contents.
+- Rates: `open.er-api.com` open endpoint, refreshed every 12 hours when online; attribution is shown in Settings.
 
 ## Design
 
@@ -54,7 +55,9 @@ Daily reminders use `expo-notifications`. Permission is requested only after the
 
 ## Roadmap
 
-1. ~~Backup: JSON export/import with validation, and visible save-failure handling.~~ Done.
-2. Optional biometric lock.
-3. Preview APK via EAS Build, tested on a real phone.
-4. Later, if needed: accounts and sync (for example Supabase).
+1. ~~Backup export/import and visible save failures~~ Done.
+2. ~~Preview APK via EAS Build~~ Done.
+3. ~~QAR and live currency conversion~~ Done.
+4. Optional biometric lock.
+5. Release prep: final icon and splash, permanent bundle ID, version bump.
+6. Later, if needed: accounts and sync (for example Supabase).
