@@ -11,6 +11,7 @@ The main experience is a dashboard with a month selector, balance/income/expense
 - **Settings:** currency, notification permission/schedule, custom categories, onboarding replay.
 - **First launch:** short skippable three-step introduction and currency choice, then an empty ledger with a clear first-entry action.
 - **Currency:** PHP is the default for new installs. Each entry stores its own currency; the Settings currency is the display currency, and amounts are converted at read time with live rates (cached, with a bundled offline fallback). Stored amounts are never converted.
+- **Balance:** Home shows the remaining balance (all income minus expenses up to the end of the selected month) with the month's net below it. Insights shows the monthly net plus the remaining balance.
 
 Removing a category archives it: it disappears from new-entry choices, keeps its metadata for past transactions and reports, and can be restored. At least one active category per type must remain.
 
@@ -45,6 +46,8 @@ Daily reminders use `expo-notifications`. Permission is requested only after the
 - `shared/ledger.ts` — types, defaults, currency/date helpers, monthly summaries
 - `app.config.ts` — app identity (`com.noiakun.digiget`, scheme `digiget`)
 - `assets/images/` — icon, splash and adaptive-icon assets
+- `shared/rates.ts` — exchange-rate fallback table and conversion helpers
+- `lib/` — theme provider, backup export/import and exchange-rate cache
 
 ## Constraints
 

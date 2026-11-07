@@ -9,6 +9,7 @@ A personal income and expense tracker built with Expo Router, React Native, Type
 - Custom categories (archive/restore keeps history)
 - Currencies: PHP (default), QAR, USD, EUR, GBP, CAD, AUD, JPY. Each entry keeps the currency it was entered in, and totals are shown in the currency you select
 - Daily reminders at a time you pick
+- Remaining balance carries over between months. Log an income entry (for example "Starting balance") for money you already have
 - First-use onboarding that can be replayed
 - JSON backup: export your data to a file and restore it from Settings
 
