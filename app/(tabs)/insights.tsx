@@ -12,6 +12,7 @@ import {
 } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
 import {
+  balanceThrough,
   formatMoney,
   monthLabel,
   monthTransactions,
@@ -22,6 +23,7 @@ export default function InsightsScreen() {
   const [month, setMonth] = useState(() => new Date());
   const current = monthTransactions(ledger.converted, month);
   const totals = monthTotals(current);
+  const remaining = balanceThrough(ledger.converted, month);
   const priorDate = useMemo(
     () => new Date(month.getFullYear(), month.getMonth() - 1, 1),
     [month],
@@ -73,7 +75,7 @@ export default function InsightsScreen() {
               letterSpacing: 1,
             }}
           >
-            MONTHLY BALANCE
+            MONTHLY NET
           </Text>
           <Text adjustsFontSizeToFit numberOfLines={1} style={styles.balance}>
             {formatMoney(
@@ -83,6 +85,10 @@ export default function InsightsScreen() {
           </Text>
           <Text style={{ color: "#DCE8DC", fontSize: 13 }}>
             {monthLabel(month)}
+          </Text>
+          <Text style={{ color: "#DCE8DC", fontSize: 13, marginTop: 4 }}>
+            Remaining balance{" "}
+            {formatMoney(remaining, ledger.data.preferences.currency)}
           </Text>
           <View style={styles.pair}>
             <View style={styles.pairItem}>

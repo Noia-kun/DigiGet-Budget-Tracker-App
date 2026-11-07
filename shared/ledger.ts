@@ -225,3 +225,12 @@ export const withTransactionCurrency = (s: LedgerSnapshot): LedgerSnapshot => {
     ),
   };
 };
+
+// Remaining balance: all income minus expenses logged up to the end of the given month.
+export const balanceThrough = (items: Transaction[], date: Date) => {
+  const key = monthKey(date);
+  return items.reduce((sum, item) => {
+    if (item.date.slice(0, 7) > key) return sum;
+    return sum + (item.kind === "income" ? item.amountCents : -item.amountCents);
+  }, 0);
+};

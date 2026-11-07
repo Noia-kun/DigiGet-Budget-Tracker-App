@@ -18,6 +18,7 @@ import {
 } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
 import {
+  balanceThrough,
   formatMoney,
   CURRENCIES,
   DEFAULT_PREFERENCES,
@@ -42,6 +43,7 @@ export default function HomeScreen() {
   const { data } = ledger;
   const monthItems = monthTransactions(ledger.converted, month);
   const totals = monthTotals(monthItems);
+  const remaining = balanceThrough(ledger.converted, month);
   const spent = monthItems.filter((item) => item.kind === "expense");
   const top = data.categories
     .filter((category) => category.kind === "expense")
@@ -121,7 +123,7 @@ export default function HomeScreen() {
                   justifyContent: "space-between",
                 }}
               >
-                <Text style={styles.balanceLabel}>NET THIS MONTH</Text>
+                <Text style={styles.balanceLabel}>REMAINING BALANCE</Text>
                 <View style={styles.cardBadge}>
                   <Icon name="leaf-outline" size={13} color="#D7E7C9" />
                   <Text
@@ -140,15 +142,14 @@ export default function HomeScreen() {
                 numberOfLines={1}
                 style={styles.balanceAmount}
               >
-                {formatMoney(
-                  totals.income - totals.expense,
-                  data.preferences.currency,
-                )}
+                {formatMoney(remaining, data.preferences.currency)}
               </Text>
               <Text style={styles.balanceHint}>
-                {totals.income >= totals.expense
-                  ? "A steady month so far."
-                  : "A clear picture is a good first step."}
+                This month {totals.income >= totals.expense ? "+" : "−"}
+                {formatMoney(
+                  Math.abs(totals.income - totals.expense),
+                  data.preferences.currency,
+                )}
               </Text>
               <View style={styles.balanceLine}>
                 <View
