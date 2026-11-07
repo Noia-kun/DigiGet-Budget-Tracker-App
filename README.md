@@ -7,7 +7,8 @@ A personal income and expense tracker built with Expo Router, React Native, Type
 - Income and expense entries with categories, notes and dates
 - Monthly summary, category breakdown, search and filters
 - Custom categories (archive/restore keeps history)
-- Currency preference (PHP by default) and daily reminders
+- Currencies: PHP (default), QAR, USD, EUR, GBP, CAD, AUD, JPY. Each entry keeps the currency it was entered in, and totals are shown in the currency you select
+- Daily reminders at a time you pick
 - First-use onboarding that can be replayed
 - JSON backup: export your data to a file and restore it from Settings
 
@@ -25,13 +26,29 @@ Checks: `pnpm check` (TypeScript), `pnpm lint`, `pnpm test`.
 
 No `.env` file is needed.
 
+## Currency
+
+Each entry stores the currency it was entered in. The currency in Settings is the display currency: Home, Activity and Insights convert every entry to it using exchange rates. Stored amounts are never changed, so switching back is exact.
+
+Rates come from the free [Exchange Rate API](https://www.exchangerate-api.com) open endpoint. They are refreshed when the cached copy is older than 12 hours and cached on the phone. Offline, the app uses the cached rates, or an approximate bundled table (`shared/rates.ts`) if none were ever fetched. Only the rates list is requested; no ledger data leaves the phone.
+
+## Build an APK
+
+Requires an Expo account (`npx eas-cli login`).
+
+```sh
+npx eas-cli build --platform android --profile preview
+```
+
+Open the build link on your phone to download and install the `.apk`. Test reminders on this build, because they don't work in Expo Go on Android.
+
 ## Project layout
 
 - `app/` — Expo Router screens (`(tabs)`: Home, Activity, Insights, Settings)
 - `components/ledger/` — shared UI, inline SVG icons, transaction composer
 - `hooks/ledger-context.tsx` — local persistence and ledger state
 - `shared/ledger.ts` — types, default categories, currency/date/summary helpers
-- `lib/` — theme provider and utilities
+- `lib/` — theme provider, backup export/import and exchange-rate cache
 - `tests/` — Vitest unit tests
 
 ## Data
