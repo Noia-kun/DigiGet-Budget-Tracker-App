@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Text,
   View,
+  Platform,
 } from "react-native";
 import {
   dateKey,
@@ -16,6 +17,7 @@ import {
   type TransactionKind,
 } from "@/shared/ledger";
 import { C, TextField } from "@/components/ledger/ui";
+import DateTimePicker, { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 type Props = {
   visible: boolean;
@@ -44,6 +46,28 @@ export function TransactionComposer({
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
   const entryCurrency = editing?.currency ?? currency;
+  const dateValue = new Date(`${date}T12:00:00`);
+  const dateLabel = Number.isNaN(dateValue.getTime())
+    ? date
+    : dateValue.toLocaleDateString(undefined, {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+  const onPickDate = (_: unknown, picked?: Date) => {
+    if (!picked) return;
+    setDate(dateKey(picked));
+    setError("");
+  };
+  const openDatePicker = () =>
+    DateTimePickerAndroid.open({
+      value: dateValue,
+      mode: "date",
+      onChange: (event, picked) => {
+        if (event.type === "set") onPickDate(event, picked);
+      },
+    });
   const choices = categories.filter(
     (category) =>
       category.kind === kind &&
@@ -228,13 +252,34 @@ export function TransactionComposer({
             </View>
           </View>
           <View>
-            <Text style={styles.fieldLabel}>DATE · YYYY-MM-DD</Text>
-            <TextField
-              value={date}
-              onChangeText={setDate}
-              placeholder="2026-10-14"
-              accessibilityLabel="Date in year month day format"
-            />
+            <Text style={styles.fieldLabel}>DATE</Text>
+            {Platform.OS === "web" ? (
+              <TextField
+                value={date}
+                onChangeText={setDate}
+                placeholder="2026-10-14"
+                accessibilityLabel="Date in year month day format"
+              />
+            ) : Platform.OS === "ios" ? (
+              <DateTimePicker
+                value={dateValue}
+                mode="date"
+                onChange={onPickDate}
+                style={{ alignSelf: "flex-start" }}
+              />
+            ) : (
+              <Pressable
+                onPress={openDatePicker}
+                accessibilityRole="button"
+                accessibilityLabel={`Date ${dateLabel}. Change`}
+                style={styles.dateBtn}
+              >
+                <Text style={{ color: C.ink, fontWeight: "700", fontSize: 15 }}>
+                  {dateLabel}
+                </Text>
+                <Icon name="chevron-down" size={16} color={C.green} />
+              </Pressable>
+            )}
           </View>
           <View>
             <Text style={styles.fieldLabel}>NOTE · OPTIONAL</Text>
@@ -369,6 +414,17 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
+  },
+  dateBtn: {
+    minHeight: 48,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: C.line,
+    backgroundColor: "#F7F8F4",
+    paddingHorizontal: 14,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   error: { color: "#A94435", fontSize: 13 },
   success: { color: C.green, fontSize: 13, fontWeight: "600" },
