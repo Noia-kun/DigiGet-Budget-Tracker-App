@@ -36,6 +36,10 @@ const config: ExpoConfig = {
   plugins: [
     "expo-asset",
     "expo-router",
+    "@react-native-community/datetimepicker",
+    "expo-font",
+    "expo-sharing",
+    "expo-status-bar",
     [
       "expo-splash-screen",
       {
