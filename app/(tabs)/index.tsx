@@ -13,7 +13,6 @@ import {
   MonthPicker,
   page,
   shadow,
-  SummaryMini,
   TransactionRow,
 } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
@@ -22,7 +21,6 @@ import {
   formatMoney,
   CURRENCIES,
   DEFAULT_PREFERENCES,
-  monthLabel,
   monthTransactions,
   monthTotals,
   type Transaction,
@@ -71,30 +69,17 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
             <BrandMark size={39} />
-            <View>
-              <Text
-                style={{
-                  color: C.ink,
-                  fontWeight: "800",
-                  fontSize: 17,
-                  letterSpacing: -0.3,
-                }}
-              >
-                DigiGet
-              </Text>
-              <Text style={{ color: C.muted, fontSize: 11, marginTop: 2 }}>
-                A little more clarity, daily.
-              </Text>
-            </View>
+            <Text
+              style={{
+                color: C.ink,
+                fontWeight: "800",
+                fontSize: 20,
+                letterSpacing: -0.3,
+              }}
+            >
+              DigiGet
+            </Text>
           </View>
-          <Pressable
-            onPress={() => router.push("/settings")}
-            accessibilityRole="button"
-            accessibilityLabel="Open settings"
-            style={styles.avatar}
-          >
-            <Icon name="person-outline" color={C.green} size={19} />
-          </Pressable>
         </View>
         {!data.onboardingComplete ? (
           <Onboarding
@@ -106,37 +91,9 @@ export default function HomeScreen() {
           />
         ) : (
           <>
-            <View style={{ gap: 12 }}>
-              <View>
-                <Text style={page.title}>Your money,</Text>
-                <Text style={[page.title, { color: C.green }]}>
-                  at a glance.
-                </Text>
-              </View>
-              <MonthPicker date={month} onChange={setMonth} />
-            </View>
+            <MonthPicker date={month} onChange={setMonth} />
             <View style={styles.balanceCard}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text style={styles.balanceLabel}>REMAINING BALANCE</Text>
-                <View style={styles.cardBadge}>
-                  <Icon name="leaf-outline" size={13} color="#D7E7C9" />
-                  <Text
-                    style={{
-                      color: "#D7E7C9",
-                      fontWeight: "600",
-                      fontSize: 11,
-                    }}
-                  >
-                    {month.toLocaleDateString(undefined, { month: "short" })}
-                  </Text>
-                </View>
-              </View>
+              <Text style={styles.balanceLabel}>Remaining balance</Text>
               <Text
                 adjustsFontSizeToFit
                 numberOfLines={1}
@@ -151,24 +108,6 @@ export default function HomeScreen() {
                   data.preferences.currency,
                 )}
               </Text>
-              <View style={styles.balanceLine}>
-                <View
-                  style={{
-                    width: "42%",
-                    height: 4,
-                    backgroundColor: "#B9D58B",
-                    borderRadius: 4,
-                  }}
-                />
-                <View
-                  style={{
-                    flex: 1,
-                    height: 4,
-                    backgroundColor: "rgba(255,255,255,0.17)",
-                    borderRadius: 4,
-                  }}
-                />
-              </View>
               <View style={styles.balanceMeta}>
                 <Text style={styles.balanceMetaText}>
                   Income {formatMoney(totals.income, data.preferences.currency)}
@@ -178,48 +117,20 @@ export default function HomeScreen() {
                 </Text>
               </View>
             </View>
-            <View style={styles.stats}>
-              <SummaryMini
-                title="INCOME"
-                value={totals.income}
-                income
-                currency={data.preferences.currency}
-              />
-              <SummaryMini
-                title="SPENDING"
-                value={totals.expense}
-                currency={data.preferences.currency}
-              />
-            </View>
-            <View style={page.card}>
-              <View style={styles.sectionHeader}>
-                <View>
+            {spent.length > 0 && (
+              <View style={page.card}>
+                <View style={styles.sectionHeader}>
                   <Text style={page.sectionTitle}>Where it went</Text>
-                  <Text style={[page.subtitle, { marginTop: 3 }]}>
-                    {monthLabel(month)} spending
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => setComposer(true)}
-                  accessibilityRole="button"
-                  style={styles.addTiny}
-                >
-                  <Icon name="add" size={17} color={C.green} />
-                  <Text
-                    style={{ color: C.green, fontWeight: "700", fontSize: 12 }}
+                  <Pressable
+                    onPress={() => router.push("/insights")}
+                    accessibilityRole="button"
+                    accessibilityLabel="See spending details in Insights"
                   >
-                    Add
-                  </Text>
-                </Pressable>
-              </View>
-              {spent.length === 0 ? (
-                <EmptyState
-                  title="A fresh page"
-                  text="Your spending categories will show up here after your first entry."
-                  action="Add an expense"
-                  onAction={() => setComposer(true)}
-                />
-              ) : (
+                    <Text style={{ color: C.green, fontWeight: "700", fontSize: 13 }}>
+                      Details
+                    </Text>
+                  </Pressable>
+                </View>
                 <View style={styles.chartRow}>
                   <DonutChart
                     items={top.map((item) => ({
@@ -230,52 +141,33 @@ export default function HomeScreen() {
                   <View style={{ flex: 1, gap: 12 }}>
                     {top.map(({ category, value }) => (
                       <View key={category.id} style={styles.categoryStat}>
-                        <View
-                          style={[
-                            styles.dot,
-                            { backgroundColor: category.color },
-                          ]}
-                        />
-                        <View style={{ flex: 1 }}>
-                          <Text
-                            numberOfLines={1}
-                            style={{
-                              color: C.ink,
-                              fontSize: 12,
-                              fontWeight: "600",
-                            }}
-                          >
-                            {category.name}
-                          </Text>
-                          <Text style={{ color: C.muted, fontSize: 11 }}>
-                            {totals.expense
-                              ? Math.round((value / totals.expense) * 100)
-                              : 0}
-                            % of spending
-                          </Text>
-                        </View>
+                        <View style={[styles.dot, { backgroundColor: category.color }]} />
                         <Text
-                          style={{
-                            color: C.ink,
-                            fontSize: 12,
-                            fontWeight: "700",
-                          }}
+                          numberOfLines={1}
+                          style={{ flex: 1, color: C.ink, fontSize: 13, fontWeight: "600" }}
                         >
-                          {formatMoney(value, data.preferences.currency)}
+                          {category.name}
+                        </Text>
+                        <Text style={{ color: C.ink, fontSize: 13, fontWeight: "700" }}>
+                          {totals.expense ? Math.round((value / totals.expense) * 100) : 0}%
                         </Text>
                       </View>
                     ))}
                   </View>
                 </View>
-              )}
-            </View>
+              </View>
+            )}
             <View style={page.card}>
               <View style={styles.sectionHeader}>
                 <Text style={page.sectionTitle}>Recent activity</Text>
-                <Text style={{ color: C.muted, fontSize: 12 }}>
-                  {monthItems.length}{" "}
-                  {monthItems.length === 1 ? "entry" : "entries"}
-                </Text>
+                <Pressable
+                  onPress={() => router.push("/activity")}
+                  accessibilityRole="button"
+                >
+                  <Text style={{ color: C.green, fontWeight: "700", fontSize: 13 }}>
+                    See all
+                  </Text>
+                </Pressable>
               </View>
               {recent.length ? (
                 recent.map((item) => (
@@ -300,20 +192,20 @@ export default function HomeScreen() {
                 />
               )}
             </View>
-            <Pressable
-              onPress={() => setComposer(true)}
-              accessibilityRole="button"
-              accessibilityLabel="Add income or expense"
-              style={styles.fab}
-            >
-              <Icon name="add" size={22} color="#fff" />
-              <Text style={{ color: "#fff", fontWeight: "700" }}>
-                Add entry
-              </Text>
-            </Pressable>
           </>
         )}
       </ScrollView>
+      {data.onboardingComplete && (
+        <Pressable
+          onPress={() => setComposer(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Add income or expense"
+          style={styles.fab}
+        >
+          <Icon name="add" size={22} color="#fff" />
+          <Text style={{ color: "#fff", fontWeight: "700" }}>Add entry</Text>
+        </Pressable>
+      )}
       {(composer || !!editing) && (
         <TransactionComposer
           visible
@@ -462,14 +354,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 4,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 15,
-    backgroundColor: "#E7EFE7",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   balanceCard: {
     backgroundColor: C.green,
     borderRadius: 25,
@@ -479,18 +363,9 @@ const styles = StyleSheet.create({
   },
   balanceLabel: {
     color: "#D4E4D3",
-    fontSize: 11,
-    fontWeight: "800",
+    fontSize: 13,
+    fontWeight: "600",
     letterSpacing: 1,
-  },
-  cardBadge: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    backgroundColor: "rgba(255,255,255,0.14)",
-    borderRadius: 10,
-    paddingHorizontal: 9,
-    paddingVertical: 6,
   },
   balanceAmount: {
     color: "#fff",
@@ -500,28 +375,17 @@ const styles = StyleSheet.create({
     marginTop: 14,
   },
   balanceHint: { color: "#DCEAD8", fontSize: 12, marginTop: 5 },
-  balanceLine: { flexDirection: "row", gap: 5, marginTop: 22 },
   balanceMeta: {
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 10,
   },
   balanceMetaText: { color: "#E2EDE1", fontSize: 11, fontWeight: "600" },
-  stats: { flexDirection: "row", gap: 12 },
   sectionHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: 13,
-  },
-  addTiny: {
-    flexDirection: "row",
-    gap: 3,
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 7,
-    backgroundColor: "#EAF3EC",
-    borderRadius: 11,
   },
   chartRow: {
     flexDirection: "row",
@@ -532,15 +396,17 @@ const styles = StyleSheet.create({
   categoryStat: { flexDirection: "row", alignItems: "center", gap: 8 },
   dot: { width: 9, height: 9, borderRadius: 5 },
   fab: {
-    alignSelf: "center",
+    position: "absolute",
+    right: 22,
+    bottom: 18,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     gap: 7,
-    backgroundColor: C.ink,
-    minHeight: 49,
-    paddingHorizontal: 22,
-    borderRadius: 17,
+    backgroundColor: C.green,
+    minHeight: 52,
+    paddingHorizontal: 20,
+    borderRadius: 18,
     ...shadow,
   },
   onboard: {
