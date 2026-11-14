@@ -9,6 +9,7 @@ import {
   EmptyState,
   LoadingState,
   page,
+  shadow,
   TextField,
   TransactionRow,
 } from "@/components/ledger/ui";
@@ -201,14 +202,6 @@ export default function ActivityScreen() {
                 tap to edit
               </Text>
             </View>
-            <Pressable
-              onPress={() => setComposer(true)}
-              accessibilityRole="button"
-              style={styles.add}
-            >
-              <Icon name="add" size={18} color="#fff" />
-              <Text style={{ color: "#fff", fontWeight: "700" }}>Add</Text>
-            </Pressable>
           </View>
           {results.length === 0 ? (
             <EmptyState
@@ -269,6 +262,15 @@ export default function ActivityScreen() {
           )}
         </View>
       </ScrollView>
+      <Pressable
+        onPress={() => setComposer(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Add income or expense"
+        style={styles.fab}
+      >
+        <Icon name="add" size={22} color="#fff" />
+        <Text style={{ color: "#fff", fontWeight: "700" }}>Add entry</Text>
+      </Pressable>
       {(composer || !!editing) && (
         <TransactionComposer
           visible
@@ -371,14 +373,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 10,
   },
-  add: {
+  fab: {
+    position: "absolute",
+    right: 22,
+    bottom: 18,
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
+    justifyContent: "center",
+    gap: 7,
     backgroundColor: C.green,
-    borderRadius: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    minHeight: 52,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    ...shadow,
   },
   monthLabel: {
     color: C.muted,
