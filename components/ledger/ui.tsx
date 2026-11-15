@@ -67,9 +67,7 @@ export const page = StyleSheet.create({
   label: {
     color: C.muted,
     fontWeight: "600",
-    fontSize: 12,
-    letterSpacing: 0.7,
-    textTransform: "uppercase",
+    fontSize: 13
   },
   body: { color: C.ink, fontSize: 14 },
   row: { flexDirection: "row", alignItems: "center" },
@@ -335,7 +333,7 @@ export function DonutChart({
         ))}
       </Svg>
       <Text style={{ fontSize: 11, color: C.muted, fontWeight: "600" }}>
-        SPENT
+        Spent
       </Text>
       <Text
         style={{ color: C.ink, fontSize: 16, fontWeight: "800", marginTop: 2 }}

@@ -185,9 +185,9 @@ export default function HomeScreen() {
                 ))
               ) : (
                 <EmptyState
-                  title="Nothing logged yet"
-                  text="Add an income or expense to start your monthly story."
-                  action="Add first entry"
+                  title="No entries this month"
+                  text="Add an income or expense to see your balance here."
+                  action="Add entry"
                   onAction={() => setComposer(true)}
                 />
               )}
@@ -234,34 +234,24 @@ function Onboarding({
   const steps = [
     {
       icon: "book-outline" as const,
-      title: "Make money feel simpler.",
-      body: "A calm little place to notice what comes in, what goes out, and what matters to you.",
+      title: "Track money in and out.",
+      body: "Log what you earn and spend. Your remaining balance carries over from month to month.",
     },
     {
       icon: "flash-outline" as const,
-      title: "Log it in a moment.",
-      body: "Pick a category, add an amount, and get right back to your day. Your entries stay on this phone when offline.",
+      title: "Add an entry in seconds.",
+      body: "Choose a category, enter the amount and save. Everything stays on this phone and works offline.",
     },
     {
       icon: "sparkles-outline" as const,
-      title: "Start with your currency.",
-      body: "Choose the money format you use most. You can change it later in Settings.",
+      title: "Choose your currency.",
+      body: "Pick the currency you use most. You can change it later in Settings, and your totals convert automatically.",
     },
   ];
   const current = steps[step];
   return (
     <View style={styles.onboard}>
       <View style={styles.onboardTop}>
-        <Text
-          style={{
-            color: C.green,
-            fontWeight: "800",
-            fontSize: 12,
-            letterSpacing: 1,
-          }}
-        >
-          A FRESH PAGE
-        </Text>
         <Pressable
           onPress={() => onFinish(currency)}
           accessibilityRole="button"
@@ -361,12 +351,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     ...shadow,
   },
-  balanceLabel: {
-    color: "#D4E4D3",
-    fontSize: 13,
-    fontWeight: "600",
-    letterSpacing: 1,
-  },
+  balanceLabel: { color: "#D4E4D3", fontSize: 13, fontWeight: "600" },
   balanceAmount: {
     color: "#fff",
     fontSize: 36,
@@ -422,7 +407,7 @@ const styles = StyleSheet.create({
   },
   onboardTop: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     alignItems: "center",
   },
   onboardArt: {

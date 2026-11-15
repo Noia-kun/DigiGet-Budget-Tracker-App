@@ -73,7 +73,7 @@ export default function ActivityScreen() {
       >
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Activity</Text>
-          <Text style={page.subtitle}>Every little thing, in one place.</Text>
+          <Text style={page.subtitle}>All your income and expenses.</Text>
         </View>
         <View style={styles.searchRow}>
           <Icon name="search-outline" size={18} color={C.muted} />
@@ -198,8 +198,8 @@ export default function ActivityScreen() {
             <View>
               <Text style={page.sectionTitle}>Your entries</Text>
               <Text style={[page.subtitle, { marginTop: 3 }]}>
-                {results.length} {results.length === 1 ? "record" : "records"} ·
-                tap to edit
+                {results.length} {results.length === 1 ? "entry" : "entries"} ·
+                tap one to edit
               </Text>
             </View>
           </View>
@@ -208,17 +208,17 @@ export default function ActivityScreen() {
               title={
                 ledger.data.transactions.length
                   ? "No matches"
-                  : "Your story starts here"
+                  : "No entries yet"
               }
               text={
                 ledger.data.transactions.length
                   ? "Try another search or clear a filter."
-                  : "Log your first income or expense and it will appear here."
+                  : "Add an income or expense and it will appear here."
               }
               action={
                 ledger.data.transactions.length
-                  ? "Clear search"
-                  : "Add first entry"
+                  ? "Clear filters"
+                  : "Add entry"
               }
               onAction={() =>
                 ledger.data.transactions.length
@@ -387,13 +387,5 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     ...shadow,
   },
-  monthLabel: {
-    color: C.muted,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 0.8,
-    textTransform: "uppercase",
-    marginTop: 7,
-    marginBottom: 3,
-  },
+  monthLabel: { color: C.muted, fontSize: 13, fontWeight: "700", marginTop: 7, marginBottom: 3 },
 });

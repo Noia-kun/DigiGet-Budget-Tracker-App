@@ -130,14 +130,7 @@ export function TransactionComposer({
       <View style={styles.root}>
         <View style={styles.grabber} />
         <View style={styles.header}>
-          <View>
-            <Text style={styles.eyebrow}>
-              {editing ? "EDIT ENTRY" : "NEW ENTRY"}
-            </Text>
-            <Text style={styles.title}>
-              {editing ? "Update your ledger" : "Add to your ledger"}
-            </Text>
-          </View>
+          <Text style={styles.title}>{editing ? "Edit entry" : "Add entry"}</Text>
           <Pressable
             onPress={onClose}
             accessibilityRole="button"
@@ -196,7 +189,7 @@ export function TransactionComposer({
           contentContainerStyle={{ gap: 17, paddingBottom: 30 }}
         >
           <View>
-            <Text style={styles.fieldLabel}>AMOUNT</Text>
+            <Text style={styles.fieldLabel}>Amount</Text>
             <View style={styles.amountWrap}>
               <Text style={{ color: C.green, fontSize: 28, fontWeight: "700" }}>
                 {currencySymbol(entryCurrency)}
@@ -215,7 +208,7 @@ export function TransactionComposer({
             </View>
           </View>
           <View>
-            <Text style={styles.fieldLabel}>CATEGORY</Text>
+            <Text style={styles.fieldLabel}>Category</Text>
             <View style={styles.categories}>
               {choices.map((category) => (
                 <Pressable
@@ -252,7 +245,7 @@ export function TransactionComposer({
             </View>
           </View>
           <View>
-            <Text style={styles.fieldLabel}>DATE</Text>
+            <Text style={styles.fieldLabel}>Date</Text>
             {Platform.OS === "web" ? (
               <TextField
                 value={date}
@@ -282,7 +275,7 @@ export function TransactionComposer({
             )}
           </View>
           <View>
-            <Text style={styles.fieldLabel}>NOTE · OPTIONAL</Text>
+            <Text style={styles.fieldLabel}>Note (optional)</Text>
             <TextField
               value={note}
               onChangeText={setNote}
@@ -346,12 +339,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginBottom: 18,
   },
-  eyebrow: {
-    color: C.green,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 1.1,
-  },
   title: { fontSize: 22, color: C.ink, fontWeight: "800", marginTop: 4 },
   close: {
     width: 38,
@@ -379,13 +366,7 @@ const styles = StyleSheet.create({
   incomeActive: { backgroundColor: "#E3F0E7" },
   segmentText: { color: C.muted, fontWeight: "700" },
   activeText: { color: C.ink },
-  fieldLabel: {
-    fontSize: 11,
-    color: C.muted,
-    fontWeight: "800",
-    letterSpacing: 0.8,
-    marginBottom: 8,
-  },
+  fieldLabel: { fontSize: 13, color: C.muted, fontWeight: "600", marginBottom: 8 },
   amountWrap: {
     minHeight: 68,
     borderWidth: 1,
