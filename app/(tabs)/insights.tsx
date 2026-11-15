@@ -62,20 +62,13 @@ export default function InsightsScreen() {
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Monthly insights</Text>
           <Text style={page.subtitle}>
-            Your patterns, without the pressure.
+            Where your money went this month.
           </Text>
         </View>
         <MonthPicker date={month} onChange={setMonth} />
         <View style={styles.overview}>
-          <Text
-            style={{
-              color: "#D8E7D8",
-              fontSize: 11,
-              fontWeight: "800",
-              letterSpacing: 1,
-            }}
-          >
-            MONTHLY NET
+          <Text style={{ color: "#D8E7D8", fontSize: 13, fontWeight: "600" }}>
+            Monthly net
           </Text>
           <Text adjustsFontSizeToFit numberOfLines={1} style={styles.balance}>
             {formatMoney(
@@ -169,16 +162,13 @@ export default function InsightsScreen() {
             </View>
           ) : (
             <EmptyState
-              title="Insights are taking shape"
-              text="Add a few expenses and your category breakdown will appear here."
+              title="No spending yet"
+              text="Add an expense and your category breakdown will appear here."
             />
           )}
         </View>
         <View style={page.card}>
           <Text style={page.sectionTitle}>Compared with last month</Text>
-          <Text style={[page.subtitle, { marginTop: 3 }]}>
-            Your spending pace, month to month.
-          </Text>
           <View style={styles.compare}>
             <View style={{ flex: 1 }}>
               <Text style={page.label}>{monthLabel(priorDate)}</Text>

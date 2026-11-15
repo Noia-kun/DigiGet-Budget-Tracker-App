@@ -221,7 +221,7 @@ export default function SettingsScreen() {
       >
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Settings</Text>
-          <Text style={page.subtitle}>Make your ledger feel like yours.</Text>
+          <Text style={page.subtitle}>Currency, reminders and categories.</Text>
         </View>
         <View style={page.card}>
           <Text style={page.sectionTitle}>Your preferences</Text>
@@ -287,9 +287,9 @@ export default function SettingsScreen() {
         <View style={page.card}>
           <View style={styles.settingRow}>
             <View style={{ flex: 1 }}>
-              <Text style={page.sectionTitle}>Gentle reminders</Text>
+              <Text style={page.sectionTitle}>Daily reminder</Text>
               <Text style={[styles.rowHint, { marginTop: 4 }]}>
-                A daily nudge to log while it’s fresh.
+                Get a notification each day to log your spending.
               </Text>
             </View>
             <Pressable
@@ -360,14 +360,11 @@ export default function SettingsScreen() {
               {permissionMessage}
             </Text>
           ) : null}
-          <Text style={styles.tinyHint}>
-            You’re always in control. Turn reminders off any time.
-          </Text>
         </View>
         <View style={page.card}>
           <Text style={page.sectionTitle}>Categories</Text>
           <Text style={[styles.rowHint, { marginTop: 3 }]}>
-            Add the labels that match your life.
+            Add your own categories.
           </Text>
           <View style={styles.categorySegments}>
             {(["expense", "income"] as const).map((value) => (
@@ -558,7 +555,6 @@ export default function SettingsScreen() {
             Replay the introduction
           </Text>
         </Pressable>
-        <Text style={styles.footer}>Made for a little more clarity.</Text>
       </ScrollView>
       <ConfirmDialog
         visible={!!categoryToRemove}
@@ -677,14 +673,7 @@ const styles = StyleSheet.create({
     marginRight: -4,
   },
   archivedCategoryList: { gap: 8, marginTop: 14 },
-  archivedHeading: {
-    color: C.muted,
-    fontSize: 11,
-    fontWeight: "800",
-    letterSpacing: 0.6,
-    textTransform: "uppercase",
-    marginBottom: 2,
-  },
+  archivedHeading: { color: C.muted, fontSize: 13, fontWeight: "700", marginBottom: 2 },
   archivedCategoryRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -712,11 +701,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     gap: 7,
     paddingVertical: 14,
-  },
-  footer: {
-    color: C.muted,
-    fontSize: 11,
-    textAlign: "center",
-    paddingBottom: 12,
   },
 });
