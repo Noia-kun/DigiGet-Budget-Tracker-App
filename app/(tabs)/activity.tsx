@@ -55,7 +55,11 @@ export default function ActivityScreen() {
         ),
     [ledger.data, ledger.converted, query, kind, category, from, to, min, max],
   );
-  const activeFilters = [category !== "all", !!from, !!to, !!min, !!max].filter(Boolean).length;
+  const activeFilters = [
+    category !== "all",
+    !!(from || to),
+    !!(min || max),
+  ].filter(Boolean).length;
   if (!ledger.ready)
     return (
       <SafeAreaView style={page.root}>
