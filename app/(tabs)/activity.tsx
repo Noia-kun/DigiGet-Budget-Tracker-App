@@ -1,4 +1,5 @@
 import { Icon } from "@/components/ledger/Icon";
+import { DateField } from "@/components/ledger/DateField";
 import { useMemo, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -54,6 +55,11 @@ export default function ActivityScreen() {
         ),
     [ledger.data, ledger.converted, query, kind, category, from, to, min, max],
   );
+  const activeFilters = [
+    category !== "all",
+    !!(from || to),
+    !!(min || max),
+  ].filter(Boolean).length;
   if (!ledger.ready)
     return (
       <SafeAreaView style={page.root}>
@@ -65,6 +71,10 @@ export default function ActivityScreen() {
     (all[key] ??= []).push(item);
     return all;
   }, {});
+  const chooseKind = (next: "all" | TransactionKind) => {
+    setKind(next);
+    setCategory("all");
+  };
   return (
     <SafeAreaView style={page.root} edges={["top"]}>
       <ScrollView
@@ -87,7 +97,7 @@ export default function ActivityScreen() {
           <Pressable
             onPress={() => setFiltersOpen(!filtersOpen)}
             accessibilityRole="button"
-            accessibilityLabel="Toggle date and amount filters"
+            accessibilityLabel={`Filters${activeFilters ? `, ${activeFilters} active` : ""}`}
             style={[
               styles.filterBtn,
               filtersOpen && { backgroundColor: C.green },
@@ -98,63 +108,79 @@ export default function ActivityScreen() {
               size={18}
               color={filtersOpen ? "#fff" : C.green}
             />
+            {activeFilters > 0 && !filtersOpen && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{activeFilters}</Text>
+              </View>
+            )}
           </Pressable>
         </View>
         <View style={styles.segment}>
           <FilterChip
             label="All"
             active={kind === "all"}
-            onPress={() => setKind("all")}
+            onPress={() => chooseKind("all")}
           />
           <FilterChip
             label="Expenses"
             active={kind === "expense"}
-            onPress={() => setKind("expense")}
+            onPress={() => chooseKind("expense")}
           />
           <FilterChip
             label="Income"
             active={kind === "income"}
-            onPress={() => setKind("income")}
+            onPress={() => chooseKind("income")}
           />
         </View>
         {filtersOpen && (
-          <View style={[page.card, { gap: 10 }]}>
-            <Text style={{ color: C.ink, fontWeight: "700" }}>
-              More filters
-            </Text>
-            <View style={styles.filterInputs}>
-              <TextField
-                value={from}
-                onChangeText={setFrom}
-                placeholder="From · YYYY-MM-DD"
-                accessibilityLabel="Start date filter"
-                style={styles.filterInput}
-              />
-              <TextField
-                value={to}
-                onChangeText={setTo}
-                placeholder="To · YYYY-MM-DD"
-                accessibilityLabel="End date filter"
-                style={styles.filterInput}
-              />
+          <View style={[page.card, { gap: 16 }]}>
+            <View>
+              <Text style={styles.filterLabel}>Category</Text>
+              <View style={styles.filterChips}>
+                <FilterChip
+                  label="All"
+                  active={category === "all"}
+                  onPress={() => setCategory("all")}
+                />
+                {ledger.data.categories
+                  .filter((item) => kind === "all" || item.kind === kind)
+                  .map((item) => (
+                    <FilterChip
+                      key={item.id}
+                      label={item.name}
+                      active={category === item.id}
+                      onPress={() => setCategory(item.id)}
+                    />
+                  ))}
+              </View>
             </View>
-            <View style={styles.filterInputs}>
-              <TextField
-                value={min}
-                onChangeText={setMin}
-                placeholder="Min amount"
-                keyboardType="decimal-pad"
-                accessibilityLabel="Minimum amount filter"
-                style={styles.filterInput}
-              />
-              <TextField
-                value={max}
-                onChangeText={setMax}
-                placeholder="Max amount"
-                keyboardType="decimal-pad"
-                accessibilityLabel="Maximum amount filter"
-                style={styles.filterInput}
-              />
+            <View>
+              <Text style={styles.filterLabel}>Date range</Text>
+              <View style={styles.filterInputs}>
+                <DateField value={from} onChange={setFrom} placeholder="From" label="Start date" />
+                <DateField value={to} onChange={setTo} placeholder="To" label="End date" />
+              </View>
+            </View>
+            <View>
+              <Text style={styles.filterLabel}>Amount range</Text>
+              <View style={styles.filterInputs}>
+                <TextField
+                  value={min}
+                  onChangeText={setMin}
+                  placeholder="Min"
+                  keyboardType="decimal-pad"
+                  accessibilityLabel="Minimum amount filter"
+                  style={styles.filterInput}
+                />
+                <TextField
+                  value={max}
+                  onChangeText={setMax}
+                  placeholder="Max"
+                  keyboardType="decimal-pad"
+                  accessibilityLabel="Maximum amount filter"
+                  style={styles.filterInput}
+                />
+              </View>
             </View>
             <Pressable
               onPress={() => {
@@ -172,27 +198,6 @@ export default function ActivityScreen() {
             </Pressable>
           </View>
         )}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ gap: 8, paddingBottom: 3 }}
-        >
-          <FilterChip
-            label="Every category"
-            active={category === "all"}
-            onPress={() => setCategory("all")}
-          />
-          {ledger.data.categories
-            .filter((item) => kind === "all" || item.kind === kind)
-            .map((item) => (
-              <FilterChip
-                key={item.id}
-                label={item.name}
-                active={category === item.id}
-                onPress={() => setCategory(item.id)}
-              />
-            ))}
-        </ScrollView>
         <View style={page.card}>
           <View style={styles.listHeader}>
             <View>
@@ -329,6 +334,21 @@ function FilterChip({
   );
 }
 const styles = StyleSheet.create({
+  filterLabel: { color: C.muted, fontSize: 13, fontWeight: "600", marginBottom: 8 },
+  filterChips: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
+  badge: {
+    position: "absolute",
+    top: -3,
+    right: -3,
+    minWidth: 16,
+    height: 16,
+    borderRadius: 8,
+    backgroundColor: C.coral,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 3,
+  },
+  badgeText: { color: "#fff", fontSize: 10, fontWeight: "700" },
   searchRow: {
     flexDirection: "row",
     alignItems: "center",

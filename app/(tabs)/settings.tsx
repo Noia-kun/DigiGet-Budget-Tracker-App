@@ -224,19 +224,10 @@ export default function SettingsScreen() {
           <Text style={page.subtitle}>Currency, reminders and categories.</Text>
         </View>
         <View style={page.card}>
-          <Text style={page.sectionTitle}>Your preferences</Text>
-          <View style={styles.settingRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.rowTitle}>Currency</Text>
-              <Text style={styles.rowHint}>Used throughout your summaries</Text>
-            </View>
-            <View style={styles.currency}>
-              <Text style={{ color: C.green, fontWeight: "800" }}>
-                {ledger.data.preferences.currency} · {currencySymbol(ledger.data.preferences.currency)}
-              </Text>
-              <Icon name="chevron-down" size={14} color={C.green} />
-            </View>
-          </View>
+          <Text style={page.sectionTitle}>Currency</Text>
+          <Text style={[styles.rowHint, { marginTop: 3, marginBottom: 12 }]}>
+            Choose the currency for your totals.
+          </Text>
           <View style={styles.currencyList}>
             {CURRENCIES.map((value) => (
               <Pressable
@@ -550,9 +541,9 @@ export default function SettingsScreen() {
           accessibilityRole="button"
           style={styles.replay}
         >
-          <Icon name="refresh-outline" size={16} color={C.green} />
-          <Text style={{ color: C.green, fontWeight: "700" }}>
-            Replay the introduction
+          <Icon name="refresh-outline" size={16} color={C.muted} />
+          <Text style={{ color: C.muted, fontWeight: "600" }}>
+            Show the introduction again
           </Text>
         </Pressable>
       </ScrollView>
@@ -592,15 +583,6 @@ const styles = StyleSheet.create({
   },
   rowTitle: { color: C.ink, fontWeight: "700", fontSize: 14 },
   rowHint: { color: C.muted, fontSize: 12, lineHeight: 17, marginTop: 3 },
-  currency: {
-    borderRadius: 11,
-    backgroundColor: "#EAF3EC",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
   currencyList: {
     flexDirection: "row",
     flexWrap: "wrap",
