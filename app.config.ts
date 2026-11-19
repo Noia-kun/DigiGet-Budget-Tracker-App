@@ -5,7 +5,7 @@ const bundleId = "com.noiakun.digiget";
 const config: ExpoConfig = {
   name: "DigiGet",
   slug: "digiget",
-  version: "1.1.0",
+  version: "1.2.0",
   orientation: "portrait",
   icon: "./assets/images/icon.png",
   scheme: "digiget",
@@ -46,9 +46,9 @@ const config: ExpoConfig = {
         image: "./assets/images/splash-icon.png",
         imageWidth: 200,
         resizeMode: "contain",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#F7F7F1",
         dark: {
-          backgroundColor: "#000000",
+          backgroundColor: "#101713",
         },
       },
     ],
