@@ -10,7 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Svg, { Circle } from "react-native-svg";
+import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import {
   formatMoney,
   monthLabel,
@@ -72,31 +72,33 @@ export const page = StyleSheet.create({
   body: { color: C.ink, fontSize: 14 },
   row: { flexDirection: "row", alignItems: "center" },
 });
+const LOGO_D =
+  "M326 250H518A262 262 0 0 1 518 774H326Q290 774 290 738V286Q290 250 326 250Z M444 380H520A132 132 0 0 1 520 644H444Q420 644 420 620V404Q420 380 444 380Z";
+const LOGO_CHECK = "M452 530L516 596L674 424";
 export function BrandMark({ size = 34 }: { size?: number }) {
   return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.34,
-        backgroundColor: C.green,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Icon name="book-outline" size={size * 0.58} color="#FFF" />
-      <View
-        style={{
-          position: "absolute",
-          width: size * 0.18,
-          height: size * 0.18,
-          borderRadius: 8,
-          backgroundColor: "#B9D58B",
-          right: size * 0.16,
-          top: size * 0.13,
-        }}
-      />
-    </View>
+    <Svg width={size} height={size} viewBox="0 0 1024 1024">
+      <Rect width={1024} height={1024} rx={300} fill={C.green} />
+      <G transform="translate(512 512) scale(1.22) translate(-535 -512)">
+        <Path d={LOGO_D} fill="#FFFFFF" fillRule="evenodd" />
+        <Path
+          d={LOGO_CHECK}
+          stroke={C.green}
+          strokeWidth={130}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+        <Path
+          d={LOGO_CHECK}
+          stroke="#B9D58B"
+          strokeWidth={82}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          fill="none"
+        />
+      </G>
+    </Svg>
   );
 }
 
