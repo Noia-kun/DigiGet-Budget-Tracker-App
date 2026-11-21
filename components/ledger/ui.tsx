@@ -14,7 +14,6 @@ import Svg, { Circle, G, Path, Rect } from "react-native-svg";
 import {
   formatMoney,
   monthLabel,
-  monthTotals,
   type Category,
   type Transaction,
 } from "@/shared/ledger";
@@ -99,6 +98,23 @@ export function BrandMark({ size = 34 }: { size?: number }) {
         />
       </G>
     </Svg>
+  );
+}
+export function AppHeader() {
+  return (
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+      <BrandMark size={32} />
+      <Text
+        style={{
+          color: C.ink,
+          fontWeight: "800",
+          fontSize: 18,
+          letterSpacing: -0.3,
+        }}
+      >
+        DigiGet
+      </Text>
+    </View>
   );
 }
 
@@ -442,45 +458,6 @@ export function LoadingState() {
       <Text style={{ color: C.muted, fontSize: 13 }}>Opening your ledger…</Text>
     </View>
   );
-}
-export function SummaryMini({
-  title,
-  value,
-  income,
-  currency,
-}: {
-  title: string;
-  value: number;
-  income?: boolean;
-  currency: string;
-}) {
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: "#F5F6F1",
-        padding: 13,
-        borderRadius: 16,
-      }}
-    >
-      <Text style={page.label}>{title}</Text>
-      <Text
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        style={{
-          color: income ? C.green : C.ink,
-          fontSize: 18,
-          fontWeight: "800",
-          marginTop: 7,
-        }}
-      >
-        {formatMoney(value, currency)}
-      </Text>
-    </View>
-  );
-}
-export function totalsFor(items: Transaction[]) {
-  return monthTotals(items);
 }
 const styles = StyleSheet.create({
   monthButton: {

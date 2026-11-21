@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
+  AppHeader,
   C,
   DonutChart,
   EmptyState,
@@ -59,6 +60,7 @@ export default function InsightsScreen() {
         contentContainerStyle={page.content}
         showsVerticalScrollIndicator={false}
       >
+        <AppHeader />
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Monthly insights</Text>
           <Text style={page.subtitle}>

@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TransactionComposer } from "@/components/ledger/TransactionComposer";
 import {
+  AppHeader,
   C,
   ConfirmDialog,
   EmptyState,
@@ -81,6 +82,7 @@ export default function ActivityScreen() {
         contentContainerStyle={page.content}
         keyboardShouldPersistTaps="handled"
       >
+        <AppHeader />
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Activity</Text>
           <Text style={page.subtitle}>All your income and expenses.</Text>
