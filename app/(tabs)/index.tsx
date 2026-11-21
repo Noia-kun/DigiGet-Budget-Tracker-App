@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TransactionComposer } from "@/components/ledger/TransactionComposer";
 import {
-  BrandMark,
+  AppHeader,
   C,
   DonutChart,
   EmptyState,
@@ -66,21 +66,7 @@ export default function HomeScreen() {
         contentContainerStyle={page.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.header}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 11 }}>
-            <BrandMark size={39} />
-            <Text
-              style={{
-                color: C.ink,
-                fontWeight: "800",
-                fontSize: 20,
-                letterSpacing: -0.3,
-              }}
-            >
-              DigiGet
-            </Text>
-          </View>
-        </View>
+        <AppHeader />
         {!data.onboardingComplete ? (
           <Onboarding
             initialCurrency={data.preferences.currency || DEFAULT_PREFERENCES.currency}
@@ -338,12 +324,6 @@ function Onboarding({
   );
 }
 const styles = StyleSheet.create({
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 4,
-  },
   balanceCard: {
     backgroundColor: C.green,
     borderRadius: 25,

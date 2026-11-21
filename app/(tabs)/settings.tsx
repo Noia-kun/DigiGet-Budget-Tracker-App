@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
-import { C, ConfirmDialog, LoadingState, page, TextField } from "@/components/ledger/ui";
+import { AppHeader, C, ConfirmDialog, LoadingState, page, TextField } from "@/components/ledger/ui";
 import { useLedger } from "@/hooks/ledger-context";
 import { CURRENCIES, currencySymbol, type Category, type TransactionKind, type LedgerSnapshot } from "@/shared/ledger";
 import { exportBackup, pickBackup } from "@/lib/backup";
@@ -219,6 +219,7 @@ export default function SettingsScreen() {
         contentContainerStyle={page.content}
         keyboardShouldPersistTaps="handled"
       >
+        <AppHeader />
         <View style={{ gap: 5 }}>
           <Text style={page.title}>Settings</Text>
           <Text style={page.subtitle}>Currency, reminders and categories.</Text>
